@@ -2,7 +2,9 @@ package ru.org.codingteam.keter.scenes.menu
 
 import org.scalajs.dom.KeyboardEvent
 import ru.org.codingteam.keter.Application
+import ru.org.codingteam.keter.game.{LocationMap, GameState}
 import ru.org.codingteam.keter.scenes.Scene
+import ru.org.codingteam.keter.scenes.game.GameScene
 import ru.org.codingteam.rotjs.interface.{Display, ROT}
 import ru.org.codingteam.rotjs.wrapper.Wrappers._
 
@@ -54,7 +56,9 @@ class MainMenuScene(display: Display) extends Scene(display) {
   }
 
   private def newGame(): Unit = {
-    notImplemented()
+    val state = GameState(Nil, LocationMap.generate())
+    val scene = new GameScene(display, state)
+    Application.setScene(scene)
   }
 
   private def notImplemented(): Unit = {
