@@ -10,8 +10,10 @@ language using the [Scala.js](http://www.scala-js.org/) compiler.
 Running the game
 ----------------
 
-Install the actual version of [`sbt` tool](http://www.scala-sbt.org/). Run the following from the terminal:
+Install the actual version of the [`sbt` tool](http://www.scala-sbt.org/). Run the following from the terminal:
 
-    $ sbt fastOptJS
+    $ sbt site
     
-Then open the file `src/main/html/index.html` from its original location on your local drive. 
+Then open the file `target/site/index.html` with your Web browser.
+
+You may publish the `site` directory through Web server if you wish to provide the game for the other players.
