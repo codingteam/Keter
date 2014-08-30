@@ -1,4 +1,4 @@
-package ru.org.codingteam.keter.game
+package ru.org.codingteam.keter.game.objects
 
 abstract class GameObject {
 

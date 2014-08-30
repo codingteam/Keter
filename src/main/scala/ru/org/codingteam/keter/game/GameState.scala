@@ -1,3 +1,3 @@
 package ru.org.codingteam.keter.game
 
-case class GameState(messages: List[String], map: LocationMap)
+case class GameState(messages: Vector[String], map: LocationMap)
