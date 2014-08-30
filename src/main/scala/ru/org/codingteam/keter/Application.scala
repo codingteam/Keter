@@ -2,7 +2,7 @@ package ru.org.codingteam.keter
 
 import ru.org.codingteam.keter.scenes.Scene
 import ru.org.codingteam.keter.scenes.menu.MainMenuScene
-import ru.org.codingteam.rotjswrapper.Display
+import ru.org.codingteam.rotjs.interface.Display
 
 import scala.scalajs.js.JSApp
 import org.scalajs.dom

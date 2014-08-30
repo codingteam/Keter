@@ -1,4 +1,4 @@
-package ru.org.codingteam.rotjswrapper
+package ru.org.codingteam.rotjs.interface
 
 import org.scalajs.dom
 
@@ -10,6 +10,7 @@ class Display extends js.Object {
 
   def clear(): Unit = ???
   def getContainer(): dom.Node = ???
-  def drawText(x: Int, y: Int, text: String, maxWidth: Int = 0): Unit = ???
+  def getOptions(): DisplayOptions = ???
+  def drawText(x: Int, y: Int, text: String, maxWidth: Int = 0): Int = ???
 
 }

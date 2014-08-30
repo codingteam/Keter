@@ -3,7 +3,8 @@ package ru.org.codingteam.keter.scenes.menu
 import org.scalajs.dom.KeyboardEvent
 import ru.org.codingteam.keter.Application
 import ru.org.codingteam.keter.scenes.Scene
-import ru.org.codingteam.rotjswrapper.{Display, ROT}
+import ru.org.codingteam.rotjs.interface.{Display, ROT}
+import ru.org.codingteam.rotjs.wrapper.Wrappers._
 
 class MainMenuScene(display: Display) extends Scene(display) {
 
@@ -36,14 +37,19 @@ class MainMenuScene(display: Display) extends Scene(display) {
 
   override def render(): Unit = {
     display.clear()
+
+    display.drawTextCentered("Keter", Some(1))
+    display.drawTextCentered("=====", Some(2))
+
+    val base = 4
     menuItems.zipWithIndex.foreach { case ((name, action), index) =>
-      val text = if (index == selectedItem) {
-        s"%b{#fff}%c{#000}$name%c{}%b{}"
+      val (indent, text) = if (index == selectedItem) {
+        (2, s"> %b{#fff}%c{#000}$name%c{}%b{}")
       } else {
-        name
+        (4, name)
       }
 
-      display.drawText(0, index, text)
+      display.drawText(indent, base + index, text)
     }
   }
 

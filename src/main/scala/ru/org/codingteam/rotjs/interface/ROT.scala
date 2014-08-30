@@ -1,4 +1,4 @@
-package ru.org.codingteam.rotjswrapper
+package ru.org.codingteam.rotjs.interface
 
 import scala.scalajs.js
 
