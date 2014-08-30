@@ -6,5 +6,6 @@ import ru.org.codingteam.keter.game.objects.Actor
 abstract class Action {
 
   def process(actor: Actor, state: GameState): GameState
+  def duration: Long
 
 }

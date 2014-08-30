@@ -1,11 +1,12 @@
 package ru.org.codingteam.keter.scenes.game
 
 import org.scalajs.dom.KeyboardEvent
-import ru.org.codingteam.keter.game.actions.{Action, WaitAction, MoveAction}
+import ru.org.codingteam.keter.game.actions.{Action, MoveAction, WaitAction}
 import ru.org.codingteam.keter.game.objects.Player
-import ru.org.codingteam.keter.game.{LocationMap, GameState}
+import ru.org.codingteam.keter.game.{GameState, LocationMap}
 import ru.org.codingteam.keter.scenes.Scene
-import ru.org.codingteam.rotjs.interface.{ROT, Display}
+import ru.org.codingteam.rotjs.interface.{EventQueue, Display, ROT}
+import ru.org.codingteam.rotjs.wrapper.Wrappers._
 
 class GameScene(display: Display, var state: GameState) extends Scene(display) {
 
@@ -27,7 +28,7 @@ class GameScene(display: Display, var state: GameState) extends Scene(display) {
   override protected def render(): Unit = {
     display.clear()
 
-    val GameState(messages, LocationMap(surfaces, objects)) = state
+    val GameState(messages, LocationMap(surfaces, objects), time) = state
     surfaces.zipWithIndex.foreach { case (row, y) =>
       row.zipWithIndex.foreach { case (surface, x) =>
         display.draw(x, y, surface.tile)
@@ -37,17 +38,27 @@ class GameScene(display: Display, var state: GameState) extends Scene(display) {
     objects foreach { case (obj, (x, y)) =>
       display.draw(x, y, obj.tile)
     }
+
+    display.drawTextCentered(s"Time passed: $time", Some(display.height - 1))
   }
+
+  private val queue = new EventQueue()
 
   private def processAction(action: Action): Unit = {
     println(s"Processing player action: $action")
+
+    queue.add(action, action.duration)
+
+    // TODO: Queue AI actions
 
     val player = state.map.objects.keys.filter({
       case Player(_) => true
       case _ => false
     }).head.asInstanceOf[Player]
 
-    state = action.process(player, state)
+    val nextAction = queue.get().asInstanceOf[Action]
+    state = state.copy(time = queue.getTime().toLong)
+    state = nextAction.process(player, state)
 
     println(s"Messages: ${state.messages}")
   }

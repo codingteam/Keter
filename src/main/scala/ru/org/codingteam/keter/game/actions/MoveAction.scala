@@ -20,4 +20,6 @@ case class MoveAction(x: Int, y: Int) extends Action {
     }
   }
 
+  override def duration = (100 * Math.sqrt(Math.abs(x) + Math.abs(y))).toLong
+
 }

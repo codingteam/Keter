@@ -9,4 +9,6 @@ case class WaitAction() extends Action {
     state.copy(state.messages :+ "Time passed but nothing has changed")
   }
 
+  override def duration = 50L
+
 }
