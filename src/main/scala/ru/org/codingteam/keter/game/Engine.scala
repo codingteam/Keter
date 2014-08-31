@@ -1,6 +1,6 @@
 package ru.org.codingteam.keter.game
 
-import ru.org.codingteam.keter.game.actions.Action
+import ru.org.codingteam.keter.game.actions.{WaitAction, Action}
 import ru.org.codingteam.keter.game.objects.Actor
 import ru.org.codingteam.rotjs.interface.EventQueue
 
@@ -21,9 +21,20 @@ object Engine {
       // We should wait for the next turn planning.
       (nextState, actor)
     } else {
+      // Prepare next action of this actor:
+      if (actor.enabled) {
+        val action = planNextAction(actor)
+        queue.add(action, action.duration)
+      }
+
       // Process next action.
       processTurn(nextState, queue)
     }
+  }
+
+  def planNextAction(actor: Actor): Action = {
+    // TODO: Prepare next AI actions here.
+    WaitAction(actor)
   }
 
 }
