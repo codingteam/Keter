@@ -2,4 +2,7 @@
 /project/target/
 /target/
 
+# logfile after crashes of SBT
+*.log
+
 .idea/
