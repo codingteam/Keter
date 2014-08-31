@@ -16,6 +16,19 @@ object Engine {
     val action = queue.get().asInstanceOf[Action]
     val nextState = action.process(state.copy(time = queue.getTime().toLong))
 
+    println(s"Processing action $action")
+
+    if (state.time == 0) {
+      // Activate all actors at the start of the game:
+      for (actor <- state.map.objects.keys.filter({
+        case a: Actor if !a.playerControllable => true
+        case _ => false
+      }).map(_.asInstanceOf[Actor])) {
+        val action = planNextAction(actor)
+        queue.add(action, action.duration)
+      }
+    }
+
     val actor = action.actor
     if (actor.playerControllable) {
       // We should wait for the next turn planning.

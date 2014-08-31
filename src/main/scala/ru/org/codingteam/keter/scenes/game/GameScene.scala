@@ -45,8 +45,6 @@ class GameScene(display: Display, var state: GameState, var player: Actor) exten
   private val queue = new EventQueue()
 
   private def processAction(action: Action): Unit = {
-    println(s"Processing player action: $action")
-
     queue.add(action, action.duration)
 
     val (newState, newPlayer) = Engine.processTurn(state, queue)
