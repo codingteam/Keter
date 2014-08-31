@@ -17,9 +17,12 @@ site := {
   (ScalaJSKeys.fastOptJS in Compile).value
   val targetDirectory = target.value / sitePath.value
   val sourceJS = target.value / "scala-2.11" / "keter-fastopt.js"
+  val sourceMap = target.value / "scala-2.11" / "keter-fastopt.js.map"
   val targetJS = targetDirectory / "keter.js"
+  val targetMap = targetDirectory / sourceMap.name
   targetJS.mkdirs()
   Files.copy(sourceJS.toPath, targetJS.toPath, StandardCopyOption.REPLACE_EXISTING)
+  Files.copy(sourceMap.toPath, targetMap.toPath, StandardCopyOption.REPLACE_EXISTING)
   (resourceDirectory in Compile).value.listFiles() foreach { file =>
     val targetFile = targetDirectory / file.name
     Files.copy(file.toPath, targetFile.toPath, StandardCopyOption.REPLACE_EXISTING)
