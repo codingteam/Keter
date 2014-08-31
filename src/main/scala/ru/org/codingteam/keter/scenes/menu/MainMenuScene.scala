@@ -64,9 +64,13 @@ class MainMenuScene(display: Display) extends Scene(display) {
   }
 
   private def newGame(): Unit = {
-    val state = GameState(Vector(), LocationMap.generate(), 0L)
+    val state = GameState()
+
+    val (map, player) = LocationMap.generate(state)
+    state.map = map
+
     val engine = new Engine(state)
-    val scene = new GameScene(display, engine, LocationMap.player)
+    val scene = new GameScene(display, engine, player)
     Application.setScene(scene)
     engine.start()
   }
