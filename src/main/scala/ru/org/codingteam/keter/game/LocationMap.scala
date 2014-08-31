@@ -1,6 +1,6 @@
 package ru.org.codingteam.keter.game
 
-import ru.org.codingteam.keter.game.objects.{Actor, Surface, Player, GameObject}
+import ru.org.codingteam.keter.game.objects._
 import ru.org.codingteam.rotjs.interface.Arena
 
 case class LocationMap(surfaces: Array[Array[Surface]], objects: Map[GameObject, (Int, Int)]) {
@@ -32,11 +32,7 @@ object LocationMap {
       }
     }
 
-    val scp = new Actor("Unknown SCP", "s") {
-
-      override val playerControllable = false
-
-    }
+    val scp = NPC("Unknown SCP", "s")
     LocationMap(
       surfaces,
       Map(

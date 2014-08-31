@@ -2,7 +2,7 @@ package ru.org.codingteam.keter.scenes.menu
 
 import org.scalajs.dom.KeyboardEvent
 import ru.org.codingteam.keter.Application
-import ru.org.codingteam.keter.game.{LocationMap, GameState}
+import ru.org.codingteam.keter.game.{Engine, GameState, LocationMap}
 import ru.org.codingteam.keter.scenes.Scene
 import ru.org.codingteam.keter.scenes.game.GameScene
 import ru.org.codingteam.rotjs.interface.{Display, ROT}
@@ -18,21 +18,29 @@ class MainMenuScene(display: Display) extends Scene(display) {
   var selectedItem = 0
 
   override def onKeyDown(event: KeyboardEvent): Unit = {
-    event.keyCode match {
+    val callRender = event.keyCode match {
       case c if c == ROT.VK_UP =>
         selectedItem -= 1
+        true
       case c if c == ROT.VK_DOWN =>
         selectedItem += 1
+        true
       case c if c == ROT.VK_RETURN =>
         val (_, action) = menuItems(selectedItem)
         action()
+        false
       case _ =>
+        true
     }
 
     selectedItem = selectedItem match {
       case x if x < 0 => menuItems.length - 1
       case x if x >= menuItems.length => 0
       case x => x
+    }
+
+    if (callRender) {
+      render()
     }
   }
 
@@ -57,8 +65,10 @@ class MainMenuScene(display: Display) extends Scene(display) {
 
   private def newGame(): Unit = {
     val state = GameState(Vector(), LocationMap.generate(), 0L)
-    val scene = new GameScene(display, state, LocationMap.player)
+    val engine = new Engine(state)
+    val scene = new GameScene(display, engine, LocationMap.player)
     Application.setScene(scene)
+    engine.start()
   }
 
   private def notImplemented(): Unit = {
