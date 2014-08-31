@@ -3,9 +3,9 @@ package ru.org.codingteam.keter.game.actions
 import ru.org.codingteam.keter.game.GameState
 import ru.org.codingteam.keter.game.objects.Actor
 
-case class MoveAction(x: Int, y: Int) extends Action {
+case class MoveAction(override val actor: Actor, x: Int, y: Int) extends Action(actor) {
 
-  override def process(actor: Actor, state: GameState): GameState = {
+  override def process(state: GameState): GameState = {
     val map = state.map
     val objects = map.objects
     val position = objects(actor)

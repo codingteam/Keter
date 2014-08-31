@@ -2,25 +2,25 @@ package ru.org.codingteam.keter.scenes.game
 
 import org.scalajs.dom.KeyboardEvent
 import ru.org.codingteam.keter.game.actions.{Action, MoveAction, WaitAction}
-import ru.org.codingteam.keter.game.objects.Player
-import ru.org.codingteam.keter.game.{GameState, LocationMap}
+import ru.org.codingteam.keter.game.objects.Actor
+import ru.org.codingteam.keter.game.{Engine, GameState, LocationMap}
 import ru.org.codingteam.keter.scenes.Scene
-import ru.org.codingteam.rotjs.interface.{EventQueue, Display, ROT}
+import ru.org.codingteam.rotjs.interface.{Display, EventQueue, ROT}
 import ru.org.codingteam.rotjs.wrapper.Wrappers._
 
-class GameScene(display: Display, var state: GameState) extends Scene(display) {
+class GameScene(display: Display, var state: GameState, var player: Actor) extends Scene(display) {
 
   override protected def onKeyDown(event: KeyboardEvent): Unit = {
     event.keyCode match {
-      case x if x == ROT.VK_NUMPAD8 || x == ROT.VK_UP => processAction(MoveAction(0, -1))
-      case x if x == ROT.VK_NUMPAD9 => processAction(MoveAction(1, -1))
-      case x if x == ROT.VK_NUMPAD6 || x == ROT.VK_RIGHT => processAction(MoveAction(1, 0))
-      case x if x == ROT.VK_NUMPAD3 => processAction(MoveAction(1, 1))
-      case x if x == ROT.VK_NUMPAD2 || x == ROT.VK_DOWN => processAction(MoveAction(0, 1))
-      case x if x == ROT.VK_NUMPAD1 => processAction(MoveAction(-1, 1))
-      case x if x == ROT.VK_NUMPAD4 || x == ROT.VK_LEFT => processAction(MoveAction(-1, 0))
-      case x if x == ROT.VK_NUMPAD7 => processAction(MoveAction(-1, -1))
-      case x if x == ROT.VK_NUMPAD5 => processAction(WaitAction())
+      case x if x == ROT.VK_NUMPAD8 || x == ROT.VK_UP => processAction(MoveAction(player, 0, -1))
+      case x if x == ROT.VK_NUMPAD9 => processAction(MoveAction(player, 1, -1))
+      case x if x == ROT.VK_NUMPAD6 || x == ROT.VK_RIGHT => processAction(MoveAction(player, 1, 0))
+      case x if x == ROT.VK_NUMPAD3 => processAction(MoveAction(player, 1, 1))
+      case x if x == ROT.VK_NUMPAD2 || x == ROT.VK_DOWN => processAction(MoveAction(player, 0, 1))
+      case x if x == ROT.VK_NUMPAD1 => processAction(MoveAction(player, -1, 1))
+      case x if x == ROT.VK_NUMPAD4 || x == ROT.VK_LEFT => processAction(MoveAction(player, -1, 0))
+      case x if x == ROT.VK_NUMPAD7 => processAction(MoveAction(player, -1, -1))
+      case x if x == ROT.VK_NUMPAD5 => processAction(WaitAction(player))
       case _ =>
     }
   }
@@ -49,16 +49,9 @@ class GameScene(display: Display, var state: GameState) extends Scene(display) {
 
     queue.add(action, action.duration)
 
-    // TODO: Queue AI actions
-
-    val player = state.map.objects.keys.filter({
-      case Player(_) => true
-      case _ => false
-    }).head.asInstanceOf[Player]
-
-    val nextAction = queue.get().asInstanceOf[Action]
-    state = state.copy(time = queue.getTime().toLong)
-    state = nextAction.process(player, state)
+    val (newState, newPlayer) = Engine.processTurn(state, queue)
+    state = newState
+    player = newPlayer
 
     println(s"Messages: ${state.messages}")
   }

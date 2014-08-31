@@ -3,10 +3,10 @@ package ru.org.codingteam.keter.game.actions
 import ru.org.codingteam.keter.game.GameState
 import ru.org.codingteam.keter.game.objects.Actor
 
-case class WaitAction() extends Action {
+case class WaitAction(override val actor: Actor) extends Action(actor) {
 
-  override def process(actor: Actor, state: GameState): GameState = {
-    state.copy(state.messages :+ "Time passed but nothing has changed")
+  override def process(state: GameState): GameState = {
+    state.copy(state.messages :+ s"Time passed for ${actor.name} but nothing has changed")
   }
 
   override def duration = 50L

@@ -20,6 +20,7 @@ object LocationMap {
 
   val wall = Surface("wall", "#", passable = false)
   val floor = Surface("floor", ".", passable = true)
+  val player = Player("Dr. Növer")
 
   def generate() = {
     val map = new Arena(7, 7)
@@ -31,7 +32,7 @@ object LocationMap {
       }
     }
 
-    LocationMap(surfaces, Map(Player("Dr. Növer") -> (2, 2)))
+    LocationMap(surfaces, Map(player -> (2, 2)))
   }
 
 }
