@@ -20,7 +20,7 @@ class Engine(var gameState: GameState) {
       case a: Actor => true
       case _ => false
     }).map(_.asInstanceOf[Actor])
-    val actions = Future.sequence(actors.map(_.getNextAction()))
+    val actions = Future.sequence(actors.map(_.getNextAction(gameState)))
     actions andThen {
       case Success(as) =>
         as.foreach(action => {
@@ -43,7 +43,7 @@ class Engine(var gameState: GameState) {
 
     val actor = action.actor
     if (actor.enabled) {
-      actor.getNextAction() andThen {
+      actor.getNextAction(gameState) andThen {
         case Success(a) =>
           eventQueue.add(a, a.duration)
           engineLoop()

@@ -1,5 +1,6 @@
 package ru.org.codingteam.keter.game.objects
 
+import ru.org.codingteam.keter.game.GameState
 import ru.org.codingteam.keter.game.actions.Action
 
 import scala.concurrent.Promise
@@ -11,7 +12,7 @@ case class Player(override val name: String) extends Actor(name, "@") {
   var nextAction = Promise[Action]()
 
   override def playerControllable = true
-  override def getNextAction() = nextAction.future.andThen({
+  override def getNextAction(state: GameState) = nextAction.future.andThen({
     case _ => nextAction = Promise[Action]()
   })
 
