@@ -54,8 +54,8 @@ class GameScene(display: Display, engine: Engine, player: Player) extends Scene(
   }
 
   private def processAction(action: Action): Unit = {
+    println(s"Scheduling player action: $action")
     player.nextAction.success(action)
-    println(s"Scheduled player action: $action")
   }
 
 }
