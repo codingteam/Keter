@@ -1,14 +1,15 @@
 package ru.org.codingteam.keter.game.objects
 
-import ru.org.codingteam.keter.game.GameState
-import ru.org.codingteam.keter.game.actions.Action
+import ru.org.codingteam.keter.game.{Faction, GameState}
 
-import scala.concurrent.Future
+case class Actor(faction: Faction,
+                 name: String,
+                 tile: String,
+                 state: ActorState,
+                 behavior: ActorBehavior,
+                 stats: StatTable,
+                 position: ObjectPosition) extends GameObject {
 
-abstract class Actor(override val name: String, override val tile: String) extends GameObject {
-
-  def playerControllable: Boolean
-  val enabled = true
-  def getNextAction(state: GameState): Future[Action]
+  def getNextAction(state: GameState) = behavior.getNextAction(this, state)
 
 }

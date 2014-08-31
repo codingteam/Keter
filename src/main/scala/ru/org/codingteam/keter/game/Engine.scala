@@ -1,7 +1,7 @@
 package ru.org.codingteam.keter.game
 
 import ru.org.codingteam.keter.game.actions.Action
-import ru.org.codingteam.keter.game.objects.Actor
+import ru.org.codingteam.keter.game.objects.{ActorActive, ActorInactive, Actor}
 import ru.org.codingteam.rotjs.interface.EventQueue
 
 import scala.concurrent.Future
@@ -16,11 +16,7 @@ class Engine(var gameState: GameState) {
 
   def start(): Unit = {
     // Initialize all actors:
-    val actors = gameState.map.objects.keys.filter({
-      case a: Actor => true
-      case _ => false
-    }).map(_.asInstanceOf[Actor])
-    val actions = Future.sequence(actors.map(_.getNextAction(gameState)))
+    val actions = Future.sequence(gameState.map.actors.map(_.getNextAction(gameState)))
     actions andThen {
       case Success(as) =>
         as.foreach(action => {
@@ -39,10 +35,11 @@ class Engine(var gameState: GameState) {
     println(s"Processing action $action")
 
     gameState = action.process(gameState.copy(time = eventQueue.getTime().toLong))
+    gameState = performGlobalActions(gameState)
     callbacks.foreach(_(gameState))
 
     val actor = action.actor
-    if (actor.enabled) {
+    if (actor.state == ActorActive) {
       actor.getNextAction(gameState) andThen {
         case Success(a) =>
           eventQueue.add(a, a.duration)
@@ -51,6 +48,15 @@ class Engine(var gameState: GameState) {
     } else {
       engineLoop()
     }
+  }
+
+  private def performGlobalActions(state: GameState): GameState = {
+    val map = state.map
+    state.copy(map = map.copy(actors = checkDeaths(map.actors)))
+  }
+
+  private def checkDeaths(actors: Set[Actor]): Set[Actor] = {
+    actors.map(actor => if (actor.stats.health < 0) actor.copy(state = ActorInactive) else actor)
   }
 
 }
