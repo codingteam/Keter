@@ -1,14 +1,14 @@
-package ru.org.codingteam.keter.game.objects
-
-import util.Random;
+package ru.org.codingteam.keter.game.objects.ai
 
 import ru.org.codingteam.keter.game.GameState
-import ru.org.codingteam.keter.game.actions.MoveAction
-import ru.org.codingteam.keter.game.actions.WaitAction
-import scala.concurrent.Future
+import ru.org.codingteam.keter.game.actions.{MoveAction, WaitAction}
+import ru.org.codingteam.keter.game.objects.Actor
 
-case class RandomBot(override val name: String, override val tile: String) extends Actor(name, tile) {
-  val random = Random;
+import scala.concurrent.Future
+import scala.util.Random
+
+trait RandomBot extends Actor {
+  val random = Random
   override val playerControllable = false
   override def getNextAction(state: GameState) = Future.successful({
     val (x, y) = (random.nextInt(3)-1, random.nextInt(3)-1)

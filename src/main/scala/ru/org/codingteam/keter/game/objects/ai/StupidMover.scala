@@ -1,12 +1,12 @@
-package ru.org.codingteam.keter.game.objects
+package ru.org.codingteam.keter.game.objects.ai
 
 import ru.org.codingteam.keter.game.GameState
-import ru.org.codingteam.keter.game.actions.WaitAction
-import ru.org.codingteam.keter.game.actions.MoveAction
+import ru.org.codingteam.keter.game.actions.{MoveAction, WaitAction}
+import ru.org.codingteam.keter.game.objects.{Actor, Player}
 
 import scala.concurrent.Future
 
-abstract class StupidMover(override val name: String, override val tile: String) extends Actor(name, tile) {
+trait StupidMover extends Actor {
   val to:Int
 
   def getNextAction(state: GameState) = Future.successful({
