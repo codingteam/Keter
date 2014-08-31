@@ -20,11 +20,9 @@ object LocationMap {
 
   val wall = Surface("wall", "#", passable = false)
   val floor = Surface("floor", ".", passable = true)
+  val player = Player("Dr. Növer")
 
-  def generate(gameState: GameState) = {
-    val player = Player(gameState, "Dr. Növer")
-    val scp = NPC(gameState, "Unknown SCP", "s")
-
+  def generate() = {
     val map = new Arena(7, 7)
     val surfaces = Array.ofDim[Surface](7, 7)
     map.create { (x: Int, y: Int, value: Int) =>
@@ -34,11 +32,12 @@ object LocationMap {
       }
     }
 
-    val actors = Map[GameObject, (Int, Int)](
-      player -> (2, 2),
-      scp -> (5, 5))
-
-    (LocationMap(surfaces, actors), player)
+    val scp = NPC("Unknown SCP", "s")
+    LocationMap(
+      surfaces,
+      Map(
+        player -> (2, 2),
+        scp -> (5, 5)))
   }
 
 }

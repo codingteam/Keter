@@ -7,10 +7,10 @@ import ru.org.codingteam.rotjs.interface.EventQueue
 import scala.concurrent.Future
 import scala.util.Success
 
-class Engine(val gameState: GameState) {
+class Engine(var gameState: GameState) {
 
   val eventQueue = new EventQueue()
-  var callbacks = List[() => Unit]()
+  var callbacks = List[GameState => Unit]()
 
   implicit val executionContext = scala.scalajs.concurrent.JSExecutionContext.runNow
 
@@ -30,7 +30,7 @@ class Engine(val gameState: GameState) {
     }
   }
 
-  def registerCallback(callback: () => Unit): Unit = {
+  def registerCallback(callback: GameState => Unit): Unit = {
     callbacks = callback +: callbacks
   }
 
@@ -38,9 +38,8 @@ class Engine(val gameState: GameState) {
     val action = eventQueue.get().asInstanceOf[Action]
     println(s"Processing action $action")
 
-    gameState.time = eventQueue.getTime().toLong
-    action.process(gameState)
-    callbacks.foreach(_())
+    gameState = action.process(gameState.copy(time = eventQueue.getTime().toLong))
+    callbacks.foreach(_(gameState))
 
     val actor = action.actor
     if (actor.enabled) {

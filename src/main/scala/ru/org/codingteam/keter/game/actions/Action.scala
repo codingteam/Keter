@@ -5,7 +5,7 @@ import ru.org.codingteam.keter.game.objects.Actor
 
 abstract class Action(val actor: Actor) {
 
-  def process(state: GameState): Unit
+  def process(state: GameState): GameState
   def duration: Long
 
 }

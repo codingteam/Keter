@@ -3,14 +3,15 @@ package ru.org.codingteam.keter.scenes.game
 import org.scalajs.dom.KeyboardEvent
 import ru.org.codingteam.keter.game.actions.{Action, MoveAction, WaitAction}
 import ru.org.codingteam.keter.game.objects.Player
-import ru.org.codingteam.keter.game.{Engine, GameState}
+import ru.org.codingteam.keter.game.{GameState, Engine, LocationMap}
 import ru.org.codingteam.keter.scenes.Scene
 import ru.org.codingteam.rotjs.interface.{Display, ROT}
 import ru.org.codingteam.rotjs.wrapper.Wrappers._
 
 class GameScene(display: Display, engine: Engine, player: Player) extends Scene(display) {
 
-  engine.registerCallback(render)
+  setGameState(engine.gameState)
+  engine.registerCallback(setGameState)
 
   override protected def onKeyDown(event: KeyboardEvent): Unit = {
     event.keyCode match {
@@ -32,18 +33,18 @@ class GameScene(display: Display, engine: Engine, player: Player) extends Scene(
   override protected def render(): Unit = {
     display.clear()
 
-    val map = gameState.map
-    map.surfaces.zipWithIndex.foreach { case (row, y) =>
+    val GameState(messages, LocationMap(surfaces, objects), time) = gameState
+    surfaces.zipWithIndex.foreach { case (row, y) =>
       row.zipWithIndex.foreach { case (surface, x) =>
         display.draw(x, y, surface.tile)
       }
     }
 
-    map.objects foreach { case (obj, (x, y)) =>
+    objects foreach { case (obj, (x, y)) =>
       display.draw(x, y, obj.tile)
     }
 
-    display.drawTextCentered(s"Time passed: ${gameState.time}", Some(display.height - 1))
+    display.drawTextCentered(s"Time passed: $time", Some(display.height - 1))
   }
 
   private var gameState: GameState = engine.gameState
