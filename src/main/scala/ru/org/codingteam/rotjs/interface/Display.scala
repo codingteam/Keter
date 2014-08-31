@@ -6,7 +6,7 @@ import scala.scalajs.js
 import scala.scalajs.js.annotation.JSName
 
 @JSName("ROT.Display")
-class Display extends js.Object {
+class Display(options: DisplayOptions = ???) extends js.Object {
 
   def clear(): Unit = ???
   def getContainer(): dom.Node = ???

@@ -2,9 +2,21 @@ package ru.org.codingteam.rotjs.interface
 
 import scala.scalajs.js
 
-class DisplayOptions extends js.Object {
+trait DisplayOptions extends js.Object {
 
-  def height: Int = ???
-  def width: Int = ???
+  var bg: String = ???
+  var border: Int = ???
+  var fg: String = ???
+  var fontFamily: String = ???
+  var fontSize: Int = ???
+  var fontStyle: String = ???
+  var height: Int = ???
+  var layout: String = ???
+  var tileHeight: Int = ???
+  var tileMap: Any = ???
+  var tileSet: Any = ???
+  var tileWidth: Int = ???
+  var spacing: Int = ???
+  var width: Int = ???
 
 }
