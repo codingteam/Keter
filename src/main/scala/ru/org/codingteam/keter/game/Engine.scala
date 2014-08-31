@@ -25,7 +25,6 @@ class Engine(var gameState: GameState) {
       case Success(as) =>
         as.foreach(action => {
           eventQueue.add(action, action.duration)
-          action.actor.resetNextAction()
         })
         engineLoop()
     }
@@ -47,7 +46,6 @@ class Engine(var gameState: GameState) {
       actor.getNextAction() andThen {
         case Success(a) =>
           eventQueue.add(a, a.duration)
-          actor.resetNextAction()
           engineLoop()
       }
     } else {

@@ -9,6 +9,5 @@ abstract class Actor(override val name: String, override val tile: String) exten
   def playerControllable: Boolean
   val enabled = true
   def getNextAction(): Future[Action]
-  def resetNextAction() = ()
 
 }
