@@ -14,7 +14,7 @@ class MeeleeAttackAction(actor: Actor, target: Actor) extends Action(actor) {
     } else {
       val stats = target.stats
       val newTarget = target.copy(stats = stats.copy(health = stats.health - damage))
-      state.copy(map = map.copy(actors = map.actors - target + newTarget))
+      state.copy(map = map.copy(actors = map.actors + (newTarget.id -> newTarget)))
     }
   }
 

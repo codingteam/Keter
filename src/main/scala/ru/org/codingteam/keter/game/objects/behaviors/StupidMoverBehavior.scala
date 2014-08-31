@@ -12,7 +12,7 @@ trait StupidMoverBehavior extends ActorBehavior {
   def getNextAction(actor: Actor, state: GameState) = Future.successful({
     var (x, y) = (0, 0)
 
-    for (a <- state.map.actors) {
+    for (a <- state.map.actors.values) {
       if (a.faction != actor.faction) {
         x = math.signum(a.position.x - actor.position.x) * to
         y = math.signum(a.position.y - actor.position.y) * to

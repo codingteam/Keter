@@ -2,7 +2,8 @@ package ru.org.codingteam.keter.game.objects
 
 import ru.org.codingteam.keter.game.{Faction, GameState}
 
-case class Actor(faction: Faction,
+case class Actor(id: ActorId,
+                 faction: Faction,
                  name: String,
                  tile: String,
                  state: ActorState,

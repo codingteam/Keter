@@ -17,7 +17,7 @@ case class MoveAction(override val actor: Actor, x: Int, y: Int) extends Action(
       case Some(tile) if !tile.passable => cannotMove
       case Some(tile) =>
         val newActor = actor.copy(position = ObjectPosition(newX, newY))
-        state.copy(map = map.copy(actors = map.actors - actor + newActor))
+        state.copy(map = map.copy(actors = map.actors + (newActor.id -> newActor)))
     }
   }
 

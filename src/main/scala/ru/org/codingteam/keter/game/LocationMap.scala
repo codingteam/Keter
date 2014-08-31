@@ -4,7 +4,7 @@ import ru.org.codingteam.keter.game.objects._
 import ru.org.codingteam.keter.game.objects.behaviors.{RandomBehavior, PlayerBehavior}
 import ru.org.codingteam.rotjs.interface.Arena
 
-case class LocationMap(surfaces: Array[Array[Surface]], actors: Set[Actor]) {
+case class LocationMap(surfaces: Array[Array[Surface]], actors: Map[ActorId, Actor]) {
 
   def surfaceAt(x: Int, y: Int): Option[Surface] = {
     (x, y) match {
@@ -36,6 +36,7 @@ object LocationMap {
     }
 
     val player = Actor(
+      ActorId(),
       foundation,
       "Dr. Növer",
       "@",
@@ -46,6 +47,7 @@ object LocationMap {
     )
 
     val scp = Actor(
+      ActorId(),
       monsters,
       "Unknown SCP",
       "s",
@@ -55,7 +57,8 @@ object LocationMap {
       ObjectPosition(5, 5)
     )
 
-    LocationMap(surfaces, Set(player, scp))
+    val actors = List(player, scp).map(actor => (actor.id, actor)).toMap
+    LocationMap(surfaces, actors)
   }
 
 }

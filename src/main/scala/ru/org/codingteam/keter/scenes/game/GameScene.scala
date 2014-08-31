@@ -41,11 +41,11 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) {
     }
 
     println(s"Drawing ${actors.size} objects")
-    actors foreach(actor => display.draw(actor.position.x, actor.position.y, actor.tile))
+    actors.values foreach(actor => display.draw(actor.position.x, actor.position.y, actor.tile))
     display.drawTextCentered(s"Time passed: $time", Some(display.height - 1))
   }
 
-  private def player = gameState.map.actors.filter(_.behavior.isInstanceOf[PlayerBehavior]).head
+  private def player = gameState.map.actors.values.filter(_.behavior.isInstanceOf[PlayerBehavior]).head
 
   private var gameState: GameState = engine.gameState
 
