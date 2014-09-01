@@ -2,9 +2,12 @@ package ru.org.codingteam.keter.game
 
 import ru.org.codingteam.keter.game.objects._
 import ru.org.codingteam.keter.game.objects.behaviors.{PlayerBehavior, RandomBehavior}
+import ru.org.codingteam.keter.util.Logging
 import ru.org.codingteam.rotjs.interface.Arena
 
-case class LocationMap(surfaces: Array[Array[Surface]], actors: Map[ActorId, Actor], playerId: ActorId) {
+case class LocationMap(surfaces: Array[Array[Surface]],
+                       actors: Map[ActorId, Actor],
+                       playerId: ActorId) extends Logging {
 
   def surfaceAt(x: Int, y: Int): Option[Surface] = {
     (x, y) match {
@@ -13,6 +16,10 @@ case class LocationMap(surfaces: Array[Array[Surface]], actors: Map[ActorId, Act
       case _ if x >= surfaces(y).length => None
       case _ => Some(surfaces(y)(x))
     }
+  }
+
+  def actorAt(position: ObjectPosition): Option[Actor] = {
+    actors.values.find(a => a.position == position)
   }
 
   def player = actors(playerId)

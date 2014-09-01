@@ -3,7 +3,7 @@ package ru.org.codingteam.keter.game.actions
 import ru.org.codingteam.keter.game.GameState
 import ru.org.codingteam.keter.game.objects.Actor
 
-class MeeleeAttackAction(actor: Actor, target: Actor) extends Action(actor) {
+case class MeleeAttackAction(override val actor: Actor, target: Actor) extends Action(actor) {
 
   val damage = 10
 
@@ -18,6 +18,6 @@ class MeeleeAttackAction(actor: Actor, target: Actor) extends Action(actor) {
     }
   }
 
-  override def duration: Long = 500
+  override def duration: Long = 80
 
 }

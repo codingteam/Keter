@@ -35,7 +35,10 @@ class Engine(var gameState: GameState) extends Logging {
     val action = eventQueue.get().asInstanceOf[Action]
     log.debug(s"Processing action $action")
 
-    gameState = action.process(gameState.copy(time = eventQueue.getTime().toLong))
+    if (action.actor.state == ActorActive) {
+      gameState = action.process(gameState.copy(time = eventQueue.getTime().toLong))
+    }
+
     gameState = performGlobalActions(gameState)
     callbacks.foreach(_(gameState))
 
