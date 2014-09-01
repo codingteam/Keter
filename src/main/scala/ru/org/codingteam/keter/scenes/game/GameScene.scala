@@ -5,10 +5,11 @@ import ru.org.codingteam.keter.game.actions.{Action, MoveAction, WaitAction}
 import ru.org.codingteam.keter.game.objects.behaviors.PlayerBehavior
 import ru.org.codingteam.keter.game.{Engine, GameState, LocationMap}
 import ru.org.codingteam.keter.scenes.Scene
+import ru.org.codingteam.keter.util.Logging
 import ru.org.codingteam.rotjs.interface.{Display, ROT}
 import ru.org.codingteam.rotjs.wrapper.Wrappers._
 
-class GameScene(display: Display, engine: Engine) extends Scene(display) {
+class GameScene(display: Display, engine: Engine) extends Scene(display) with Logging {
 
   setGameState(engine.gameState)
   engine.registerCallback(setGameState)
@@ -40,8 +41,8 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) {
       }
     }
 
-    println(s"Drawing ${actors.size} objects")
-    actors.values foreach(actor => display.draw(actor.position.x, actor.position.y, actor.tile))
+    log.debug(s"Drawing ${actors.size} objects")
+    actors.values foreach (actor => display.draw(actor.position.x, actor.position.y, actor.tile))
     display.drawTextCentered(s"Time passed: $time", Some(display.height - 1))
   }
 
@@ -54,7 +55,7 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) {
   }
 
   private def processAction(action: Action): Unit = {
-    println(s"Scheduling player action: $action")
+    log.debug(s"Scheduling player action: $action")
     val behavior = player.behavior.asInstanceOf[PlayerBehavior]
     behavior.nextAction.success(action)
   }
