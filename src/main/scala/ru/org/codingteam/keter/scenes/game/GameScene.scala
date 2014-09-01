@@ -34,7 +34,9 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
   override protected def render(): Unit = {
     display.clear()
 
-    val GameState(messages, LocationMap(surfaces, actors), time) = gameState
+    val GameState(messages, locationMap@LocationMap(surfaces, actors, _), time) = gameState
+    val player = locationMap.player
+
     surfaces.zipWithIndex.foreach { case (row, y) =>
       row.zipWithIndex.foreach { case (surface, x) =>
         display.draw(x, y, surface.tile)
@@ -43,7 +45,9 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
 
     log.debug(s"Drawing ${actors.size} objects")
     actors.values foreach (actor => display.draw(actor.position.x, actor.position.y, actor.tile))
-    display.drawTextCentered(s"Time passed: $time", Some(display.height - 1))
+    // display stats.
+    display.drawTextCentered(s"Faction/Name: ${player.faction.name}/${player.name}", Some(display.height - 2))
+    display.drawTextCentered(s"Health: ${player.stats.health} Time passed: $time", Some(display.height - 1))
   }
 
   private def player = gameState.map.actors.values.filter(_.behavior.isInstanceOf[PlayerBehavior]).head
