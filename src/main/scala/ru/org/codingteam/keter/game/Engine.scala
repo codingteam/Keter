@@ -1,13 +1,14 @@
 package ru.org.codingteam.keter.game
 
 import ru.org.codingteam.keter.game.actions.Action
-import ru.org.codingteam.keter.game.objects.{ActorId, ActorActive, ActorInactive, Actor}
+import ru.org.codingteam.keter.game.objects.{Actor, ActorActive, ActorId, ActorInactive}
+import ru.org.codingteam.keter.util.Logging
 import ru.org.codingteam.rotjs.interface.EventQueue
 
 import scala.concurrent.Future
 import scala.util.Success
 
-class Engine(var gameState: GameState) {
+class Engine(var gameState: GameState) extends Logging {
 
   val eventQueue = new EventQueue()
   var callbacks = List[GameState => Unit]()
@@ -32,7 +33,7 @@ class Engine(var gameState: GameState) {
 
   private def engineLoop(): Unit = {
     val action = eventQueue.get().asInstanceOf[Action]
-    println(s"Processing action $action")
+    log.debug(s"Processing action $action")
 
     gameState = action.process(gameState.copy(time = eventQueue.getTime().toLong))
     gameState = performGlobalActions(gameState)
