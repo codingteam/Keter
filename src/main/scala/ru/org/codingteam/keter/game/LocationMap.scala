@@ -7,6 +7,7 @@ import ru.org.codingteam.rotjs.interface.Arena
 
 case class LocationMap(surfaces: Array[Array[Surface]],
                        actors: Map[ActorId, Actor],
+                       objects: Array[Array[List[GameObject]]],
                        playerId: ActorId) extends Logging {
 
   def surfaceAt(x: Int, y: Int): Option[Surface] = {
@@ -66,8 +67,18 @@ object LocationMap {
       ObjectPosition(5, 5)
     )
 
+    val door = Door(
+      ActorId(),
+      "door",
+      "$",
+      false,
+      false
+    )
+
     val actors = List(player, scp).map(actor => (actor.id, actor)).toMap
-    LocationMap(surfaces, actors, player.id)
+    var objects = Array.ofDim[List[GameObject]](7, 7)
+    objects(3)(4) = List(door)
+    LocationMap(surfaces, actors, objects, player.id)
   }
 
 }
