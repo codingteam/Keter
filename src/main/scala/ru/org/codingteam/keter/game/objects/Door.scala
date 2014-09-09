@@ -4,4 +4,6 @@ case class Door(id: ActorId,
                 name: String,
                 tile: String,
                 passable: Boolean,
-                open: Boolean) extends GameObject
+                open: Boolean,
+                openTile: String,
+                closedTile :String) extends GameObject

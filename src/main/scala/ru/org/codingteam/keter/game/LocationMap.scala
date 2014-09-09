@@ -23,6 +23,16 @@ case class LocationMap(surfaces: Array[Array[Surface]],
     actors.values.find(a => a.position == position)
   }
 
+  def firstObjectAt(x: Int, y: Int): Option[GameObject] = {
+    (x, y) match {
+      case _ if y < 0 || x < 0 => None
+      case _ if y >= objects.length => None
+      case _ if x >= objects(y).length => None
+      case _ if objects(y)(x).length == 0 => None
+      case _ => Some(objects(y)(x)(0))
+    }
+  }
+
   def player = actors(playerId)
 
 }
@@ -35,9 +45,12 @@ object LocationMap {
   val foundation = Faction("SCP Foundation")
   val monsters = Faction("GOC")
 
+  val xDim = 7
+  val yDim = 7
+
   def generate() = {
-    val map = new Arena(7, 7)
-    val surfaces = Array.ofDim[Surface](7, 7)
+    val map = new Arena(xDim, yDim)
+    val surfaces = Array.ofDim[Surface](xDim, yDim)
     map.create { (x: Int, y: Int, value: Int) =>
       surfaces(x)(y) = value match {
         case 0 => floor
@@ -70,14 +83,21 @@ object LocationMap {
     val door = Door(
       ActorId(),
       "door",
-      "$",
+      "▯",
       false,
-      false
+      false,
+      "|",
+      "▯"
     )
 
     val actors = List(player, scp).map(actor => (actor.id, actor)).toMap
-    var objects = Array.ofDim[List[GameObject]](7, 7)
-    objects(3)(4) = List(door)
+    var objects = Array.ofDim[List[GameObject]](xDim, yDim)
+    for (x <- 0 until xDim) {
+      for (y <- 0 until yDim) {
+        objects(y)(x) = List[GameObject]()
+      }
+    }
+    objects(3)(4) =  door :: objects(3)(4)
     LocationMap(surfaces, actors, objects, player.id)
   }
 

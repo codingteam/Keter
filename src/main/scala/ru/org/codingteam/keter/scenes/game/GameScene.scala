@@ -60,7 +60,7 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
     log.debug("Drawing objects")
     objects.zipWithIndex.foreach { case (row, y) =>
       row.zipWithIndex.foreach { case (obj, x) =>
-        if (obj(0) != null) {
+        if (obj.length > 0) {
           log.debug(s"Drawing object $obj(0).name at $x, $y")
           display.draw(x, y, obj(0).tile)
         }
