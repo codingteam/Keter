@@ -18,17 +18,11 @@ case class MoveAction(override val actor: Actor, x: Int, y: Int) extends Action(
       case Some(tile) if !tile.passable => cannotMove
       case Some(tile) => {
         val newObjects = map.objects
-        println(1)
         topObject match {
           case None => {}
-          case Some(o) if (o.isInstanceOf[Door]) => {
-            println(2)
-            val door = o.asInstanceOf[Door]
-            println(3)
-            val newDoor = door.copy(tile = door.openTile, open = false, passable = true)
-            println(4)
+          case Some(door:Door) if (!door.open) => {
+            val newDoor = door.copy(tile = door.openTile, open = true, passable = true)
             newObjects(newY)(newX) = newObjects(newY)(newX).updated(0, newDoor)
-            println(5)
           }
         }
         val newActor = actor.copy(position = ObjectPosition(newX, newY))

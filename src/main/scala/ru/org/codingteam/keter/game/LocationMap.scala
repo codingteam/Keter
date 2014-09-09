@@ -91,12 +91,7 @@ object LocationMap {
     )
 
     val actors = List(player, scp).map(actor => (actor.id, actor)).toMap
-    var objects = Array.ofDim[List[GameObject]](xDim, yDim)
-    for (x <- 0 until xDim) {
-      for (y <- 0 until yDim) {
-        objects(y)(x) = List[GameObject]()
-      }
-    }
+    val objects = Array.fill[List[GameObject]](xDim,yDim)(Nil)
     objects(3)(4) =  door :: objects(3)(4)
     LocationMap(surfaces, actors, objects, player.id)
   }
