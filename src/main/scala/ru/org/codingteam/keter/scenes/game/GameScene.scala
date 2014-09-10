@@ -2,7 +2,7 @@ package ru.org.codingteam.keter.scenes.game
 
 import org.scalajs.dom.KeyboardEvent
 import ru.org.codingteam.keter.game.actions.{MoveAction, MeleeAttackAction, WaitAction, Action}
-import ru.org.codingteam.keter.game.objects.{ActorInactive, ActorActive, Actor, ObjectPosition}
+import ru.org.codingteam.keter.game.objects._
 import ru.org.codingteam.keter.game.objects.behaviors.PlayerBehavior
 import ru.org.codingteam.keter.game.{Engine, GameState, LocationMap}
 import ru.org.codingteam.keter.scenes.Scene
@@ -47,16 +47,27 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
   override protected def render(): Unit = {
     display.clear()
 
-    val GameState(messages, locationMap@LocationMap(surfaces, actors, _), time) = gameState
+    val GameState(messages, locationMap@LocationMap(surfaces, actors, objects, _), time) = gameState
     val player = locationMap.player
 
+    log.debug("Drawing surfaces")
     surfaces.zipWithIndex.foreach { case (row, y) =>
       row.zipWithIndex.foreach { case (surface, x) =>
         display.draw(x, y, surface.tile)
       }
     }
 
-    log.debug(s"Drawing ${actors.size} objects")
+    log.debug("Drawing objects")
+    objects.zipWithIndex.foreach { case (row, y) =>
+      row.zipWithIndex.foreach { case (obj, x) =>
+        if (obj.length > 0) {
+          log.debug(s"Drawing object $obj(0).name at $x, $y")
+          display.draw(x, y, obj(0).tile)
+        }
+      }
+    }
+
+    log.debug(s"Drawing ${actors.size} actors")
     actors.values foreach (actor => display.draw(actor.position.x, actor.position.y, actor.tile, getColor(actor)))
     // display stats.
     display.drawTextCentered(s"Faction/Name: ${player.faction.name}/${player.name}", Some(display.height - 2))
