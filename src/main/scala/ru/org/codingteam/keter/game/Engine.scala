@@ -17,12 +17,15 @@ class Engine(var gameState: GameState) extends Logging {
 
   def start(): Unit = {
     // Initialize all actors:
-    val actions = Future.sequence(gameState.map.actors.values.map(_.getNextAction(gameState)))
+    val actions = Future.sequence(
+      gameState.map.actors.values.map(actor => actor.getNextAction(gameState).map((actor, _))))
     actions andThen {
       case Success(as) =>
-        as.foreach(action => {
-          eventQueue.add(action, action.duration)
-        })
+        as.foreach {
+          case (actor, action) =>
+            eventQueue.add(action, action.duration(gameState))
+        }
+
         engineLoop()
     }
   }
@@ -46,7 +49,7 @@ class Engine(var gameState: GameState) extends Logging {
     if (actor.state == ActorActive) {
       actor.getNextAction(gameState) andThen {
         case Success(a) =>
-          eventQueue.add(a, a.duration)
+          eventQueue.add(a, a.duration(gameState))
           engineLoop()
       }
     } else {
