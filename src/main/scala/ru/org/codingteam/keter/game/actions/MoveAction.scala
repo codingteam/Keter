@@ -24,6 +24,7 @@ case class MoveAction(override val actor: Actor, x: Int, y: Int) extends Action(
             val newDoor = door.copy(tile = door.openTile, open = true, passable = true)
             newObjects(newY)(newX) = newObjects(newY)(newX).updated(0, newDoor)
           }
+          case Some(wtf:Any) => {}
         }
         val newActor = actor.copy(position = ObjectPosition(newX, newY))
         val newActors = map.actors + (newActor.id -> newActor)
