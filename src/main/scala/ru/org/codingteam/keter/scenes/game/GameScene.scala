@@ -1,14 +1,14 @@
 package ru.org.codingteam.keter.scenes.game
 
 import org.scalajs.dom.KeyboardEvent
-import ru.org.codingteam.keter.game.actions.{MoveAction, MeleeAttackAction, WaitAction, Action}
-import ru.org.codingteam.keter.game.objects.{ActorInactive, ActorActive, Actor, ObjectPosition}
+import ru.org.codingteam.keter.game.actions.{Action, MeleeAttackAction, MoveAction, WaitAction}
 import ru.org.codingteam.keter.game.objects.behaviors.PlayerBehavior
+import ru.org.codingteam.keter.game.objects.{Actor, ActorActive, ActorInactive, ObjectPosition}
 import ru.org.codingteam.keter.game.{Engine, GameState, LocationMap}
 import ru.org.codingteam.keter.scenes.Scene
 import ru.org.codingteam.keter.util.Logging
 import ru.org.codingteam.rotjs.interface.{Display, ROT}
-import ru.org.codingteam.rotjs.wrapper.Wrappers._
+import ru.org.codingteam.rotjs.wrappers._
 
 class GameScene(display: Display, engine: Engine) extends Scene(display) with Logging {
 
@@ -49,18 +49,20 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
 
     val GameState(messages, locationMap@LocationMap(surfaces, actors, _), time) = gameState
     val player = locationMap.player
+    val fieldView = display.viewport(1, 1, display.width - 2, display.height - 5)
 
     surfaces.zipWithIndex.foreach { case (row, y) =>
       row.zipWithIndex.foreach { case (surface, x) =>
-        display.draw(x, y, surface.tile)
+        fieldView.draw(x, y, surface.tile)
       }
     }
 
     log.debug(s"Drawing ${actors.size} objects")
-    actors.values foreach (actor => display.draw(actor.position.x, actor.position.y, actor.tile, getColor(actor)))
+    actors.values foreach (actor => fieldView.draw(actor.position.x, actor.position.y, actor.tile, getColor(actor)))
     // display stats.
-    display.drawTextCentered(s"Faction/Name: ${player.faction.name}/${player.name}", Some(display.height - 2))
-    display.drawTextCentered(s"Health: ${player.stats.health} Time passed: $time", Some(display.height - 1))
+    val statsView = display.viewport(0, display.height - 2, display.width, 2)
+    statsView.drawTextCentered(s"Faction/Name: ${player.faction.name}/${player.name}", Some(0))
+    statsView.drawTextCentered(s"Health: ${player.stats.health} Time passed: $time", Some(1))
   }
 
   private def player = gameState.map.actors.values.filter(_.behavior.isInstanceOf[PlayerBehavior]).head

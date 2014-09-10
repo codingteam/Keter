@@ -6,7 +6,7 @@ import ru.org.codingteam.keter.game.{Engine, GameState, LocationMap}
 import ru.org.codingteam.keter.scenes.Scene
 import ru.org.codingteam.keter.scenes.game.GameScene
 import ru.org.codingteam.rotjs.interface.{Display, ROT}
-import ru.org.codingteam.rotjs.wrapper.Wrappers._
+import ru.org.codingteam.rotjs.wrappers._
 
 class MainMenuScene(display: Display) extends Scene(display) {
 
