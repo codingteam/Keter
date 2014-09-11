@@ -3,8 +3,8 @@ package ru.org.codingteam.keter.scenes.menu
 import org.scalajs.dom.KeyboardEvent
 import ru.org.codingteam.keter.Application
 import ru.org.codingteam.keter.scenes.Scene
-import ru.org.codingteam.rotjs.interface.{ROT, Display}
-import ru.org.codingteam.rotjs.wrapper.Wrappers._
+import ru.org.codingteam.rotjs.interface.{Display, ROT}
+import ru.org.codingteam.rotjs.wrappers._
 
 class NotImplementedScene(display: Display, parentScene: Scene) extends Scene(display) {
 
