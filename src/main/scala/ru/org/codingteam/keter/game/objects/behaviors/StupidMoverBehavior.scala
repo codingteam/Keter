@@ -1,12 +1,13 @@
 package ru.org.codingteam.keter.game.objects.behaviors
 
 import ru.org.codingteam.keter.game.GameState
-import ru.org.codingteam.keter.game.actions.{MoveAction, WaitAction}
-import ru.org.codingteam.keter.game.objects.{Actor, ActorBehavior}
+import ru.org.codingteam.keter.game.actions.{Action, WalkAction, WaitAction}
+import ru.org.codingteam.keter.game.objects.{ObjectPosition, Actor, IActorBehavior}
 
 import scala.concurrent.Future
 
-trait StupidMoverBehavior extends ActorBehavior {
+trait StupidMoverBehavior extends IActorBehavior {
+
   val to: Int
 
   def getNextAction(actor: Actor, state: GameState) = Future.successful({
@@ -20,9 +21,9 @@ trait StupidMoverBehavior extends ActorBehavior {
     }
 
     if (x == 0 && y == 0) {
-      WaitAction(actor)
+      Action(actor, WaitAction, actor.position)
     } else {
-      MoveAction(actor, x, y)
+      Action(actor, WalkAction, actor.position + ObjectPosition(x, y))
     }
   })
 
