@@ -34,9 +34,9 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
       target match {
         case None =>
         case Some(t) =>
-          gameState.map.actorAt(player.position + t) match {
-            case None => processAction(WalkAction, ObjectPosition(t.x, t.y))
-            case Some(a) => processAction(MeleeAttackAction, a.position)
+          gameState.map.actorAt(t) match {
+            case None => processAction(WalkAction, t)
+            case Some(a) => processAction(MeleeAttackAction, t)
           }
       }
     }
@@ -74,7 +74,7 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
     display.drawTextCentered(s"Health: ${player.stats.health} Time passed: $time", Some(display.height - 1))
   }
 
-  private def player = gameState.map.actors.values.filter(_.behavior.isInstanceOf[PlayerBehavior]).head
+  private def player = gameState.map.player
 
   private def playerVector(dx: Int, dy: Int) = player.position + ObjectPosition(dx, dy)
 
