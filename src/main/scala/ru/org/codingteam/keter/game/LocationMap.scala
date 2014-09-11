@@ -94,7 +94,7 @@ object LocationMap {
     LocationMap(surfaces, actors, objects, player.id)
   }
 
-  def human(behavior: ActorBehavior,
+  def human(behavior: IActorBehavior,
             faction: Faction,
             name: String,
             tile: String,

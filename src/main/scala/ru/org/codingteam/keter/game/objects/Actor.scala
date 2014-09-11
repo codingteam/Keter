@@ -8,7 +8,7 @@ case class Actor(id: ActorId,
                  name: String,
                  tile: String,
                  state: ActorState,
-                 behavior: ActorBehavior,
+                 behavior: IActorBehavior,
                  stats: StatTable,
                  equipment: Seq[EquipmentItem],
                  position: ObjectPosition) extends GameObject {

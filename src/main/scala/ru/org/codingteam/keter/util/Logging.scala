@@ -4,6 +4,7 @@ package ru.org.codingteam.keter.util
  * Trait which initializes instance of logger with object's classname.
  */
 trait Logging {
+  
   lazy val log = new Logging.Logger(getClass.getName)
 
 }

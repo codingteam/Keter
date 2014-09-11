@@ -2,11 +2,11 @@ package ru.org.codingteam.keter.game.objects.behaviors
 
 import ru.org.codingteam.keter.game.GameState
 import ru.org.codingteam.keter.game.actions.Action
-import ru.org.codingteam.keter.game.objects.{Actor, ActorBehavior}
+import ru.org.codingteam.keter.game.objects.{Actor, IActorBehavior}
 
 import scala.concurrent.{Promise, Future}
 
-class PlayerBehavior extends ActorBehavior {
+class PlayerBehavior extends IActorBehavior {
 
   implicit val executionContext = scala.scalajs.concurrent.JSExecutionContext.runNow
 

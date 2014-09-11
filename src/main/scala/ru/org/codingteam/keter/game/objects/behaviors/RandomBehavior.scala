@@ -2,12 +2,12 @@ package ru.org.codingteam.keter.game.objects.behaviors
 
 import ru.org.codingteam.keter.game.GameState
 import ru.org.codingteam.keter.game.actions.{Action, WalkAction, WaitAction}
-import ru.org.codingteam.keter.game.objects.{ObjectPosition, ActorBehavior, Actor}
+import ru.org.codingteam.keter.game.objects.{ObjectPosition, IActorBehavior, Actor}
 
 import scala.concurrent.Future
 import scala.util.Random
 
-object RandomBehavior extends ActorBehavior {
+object RandomBehavior extends IActorBehavior {
 
   val random = Random
 

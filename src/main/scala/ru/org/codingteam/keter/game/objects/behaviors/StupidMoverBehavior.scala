@@ -2,11 +2,11 @@ package ru.org.codingteam.keter.game.objects.behaviors
 
 import ru.org.codingteam.keter.game.GameState
 import ru.org.codingteam.keter.game.actions.{Action, WalkAction, WaitAction}
-import ru.org.codingteam.keter.game.objects.{ObjectPosition, Actor, ActorBehavior}
+import ru.org.codingteam.keter.game.objects.{ObjectPosition, Actor, IActorBehavior}
 
 import scala.concurrent.Future
 
-trait StupidMoverBehavior extends ActorBehavior {
+trait StupidMoverBehavior extends IActorBehavior {
 
   val to: Int
 
