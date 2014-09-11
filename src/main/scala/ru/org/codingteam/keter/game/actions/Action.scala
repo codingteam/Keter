@@ -1,11 +1,11 @@
 package ru.org.codingteam.keter.game.actions
 
 import ru.org.codingteam.keter.game.GameState
-import ru.org.codingteam.keter.game.objects.Actor
+import ru.org.codingteam.keter.game.objects.{Actor, ObjectPosition}
 
-abstract class Action(val actor: Actor) {
+case class Action(actor: Actor, definition: IActionDefinition, target: ObjectPosition) {
 
-  def process(state: GameState): GameState
-  def duration: Long
+  def duration(state: GameState) = definition.duration(actor, target, state)
+  def process(state: GameState) = definition.process(actor, target, state)
 
 }

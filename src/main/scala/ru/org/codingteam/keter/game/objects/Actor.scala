@@ -1,5 +1,6 @@
 package ru.org.codingteam.keter.game.objects
 
+import ru.org.codingteam.keter.game.objects.equipment.EquipmentItem
 import ru.org.codingteam.keter.game.{Faction, GameState}
 
 case class Actor(id: ActorId,
@@ -9,6 +10,7 @@ case class Actor(id: ActorId,
                  state: ActorState,
                  behavior: ActorBehavior,
                  stats: StatTable,
+                 equipment: Seq[EquipmentItem],
                  position: ObjectPosition) extends GameObject {
 
   def getNextAction(state: GameState) = behavior.getNextAction(this, state)

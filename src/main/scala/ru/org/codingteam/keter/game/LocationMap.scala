@@ -1,7 +1,9 @@
 package ru.org.codingteam.keter.game
 
+import ru.org.codingteam.keter.game.actions.{MeleeAttackAction, WalkAction}
 import ru.org.codingteam.keter.game.objects._
 import ru.org.codingteam.keter.game.objects.behaviors.{PlayerBehavior, RandomBehavior}
+import ru.org.codingteam.keter.game.objects.equipment.EquipmentItem
 import ru.org.codingteam.keter.util.Logging
 import ru.org.codingteam.rotjs.interface.Arena
 
@@ -58,25 +60,21 @@ object LocationMap {
       }
     }
 
-    val player = Actor(
-      ActorId(),
+    val player = human(
+      new PlayerBehavior,
       foundation,
       "Dr. Növer",
       "@",
-      ActorActive,
-      new PlayerBehavior,
-      StatTable(health = 100),
+      ActorId(),
       ObjectPosition(2, 2)
     )
 
-    val scp = Actor(
-      ActorId(),
+    val scp = human(
+      RandomBehavior,
       monsters,
       "Unknown SCP",
       "s",
-      ActorActive,
-      RandomBehavior,
-      StatTable(health = 100),
+      ActorId(),
       ObjectPosition(5, 5)
     )
 
@@ -94,6 +92,28 @@ object LocationMap {
     val objects = Array.fill[List[GameObject]](xDim,yDim)(Nil)
     objects(3)(4) =  door :: objects(3)(4)
     LocationMap(surfaces, actors, objects, player.id)
+  }
+
+  def human(behavior: ActorBehavior,
+            faction: Faction,
+            name: String,
+            tile: String,
+            id: ActorId,
+            position: ObjectPosition): Actor = {
+    val legs = EquipmentItem("Legs", Vector(WalkAction))
+    val hands = EquipmentItem("Hands", Vector(MeleeAttackAction))
+
+    Actor(
+      id,
+      faction,
+      name,
+      tile,
+      ActorActive,
+      behavior,
+      StatTable(health = 100),
+      Vector(legs, hands),
+      position
+    )
   }
 
 }
