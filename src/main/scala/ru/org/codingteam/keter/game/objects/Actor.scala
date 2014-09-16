@@ -1,7 +1,8 @@
 package ru.org.codingteam.keter.game.objects
 
+import ru.org.codingteam.keter.game.Faction
 import ru.org.codingteam.keter.game.objects.equipment.EquipmentItem
-import ru.org.codingteam.keter.game.{Faction, GameState}
+import ru.org.codingteam.keter.map.{ActorPosition, UniverseSnapshot}
 
 case class Actor(id: ActorId,
                  faction: Faction,
@@ -11,8 +12,8 @@ case class Actor(id: ActorId,
                  behavior: IActorBehavior,
                  stats: StatTable,
                  equipment: Seq[EquipmentItem],
-                 position: ObjectPosition) extends GameObject {
+                 position: ActorPosition) {
 
-  def getNextAction(state: GameState) = behavior.getNextAction(this, state)
+  def getNextAction(state: UniverseSnapshot) = behavior.getNextAction(this, state)
 
 }

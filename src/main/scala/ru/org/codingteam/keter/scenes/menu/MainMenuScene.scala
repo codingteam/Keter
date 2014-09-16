@@ -2,7 +2,8 @@ package ru.org.codingteam.keter.scenes.menu
 
 import org.scalajs.dom.KeyboardEvent
 import ru.org.codingteam.keter.Application
-import ru.org.codingteam.keter.game.{Engine, GameState, LocationMap}
+import ru.org.codingteam.keter.game.{Engine, Location}
+import ru.org.codingteam.keter.map.Universe
 import ru.org.codingteam.keter.scenes.Scene
 import ru.org.codingteam.keter.scenes.game.GameScene
 import ru.org.codingteam.rotjs.interface.{Display, ROT}
@@ -64,9 +65,8 @@ class MainMenuScene(display: Display) extends Scene(display) {
   }
 
   private def newGame(): Unit = {
-    val map = LocationMap.generate()
-    val state = GameState(Vector(), map, 0L)
-    val engine = new Engine(state)
+    val universe = Universe(Location.createLocation())
+    val engine = new Engine(universe)
     val scene = new GameScene(display, engine)
     Application.setScene(scene)
     engine.start()
