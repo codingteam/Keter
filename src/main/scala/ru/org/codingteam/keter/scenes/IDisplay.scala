@@ -24,11 +24,12 @@ trait IDisplay {
     drawText(realX, realY, text)
   }
 
-  def viewport(left: Int, top: Int, width: Int, height: Int): IDisplay = Viewport(this, left, top, width, height)
+  def viewport(left: Int, top: Int, width: Int, height: Int, shiftX: Int = 0, shiftY: Int = 0): IDisplay =
+    Viewport(this, left, top, width, height, shiftX, shiftY)
 
-  def viewportCentered(width: Int, height: Int, y: Option[Int] = None): IDisplay = {
+  def viewportCentered(width: Int, height: Int, y: Option[Int] = None, shiftX: Int = 0, shiftY: Int = 0): IDisplay = {
     val left = (this.width - width) / 2
     val top = y.getOrElse((this.height - height) / 2)
-    viewport(left, top, width, height)
+    viewport(left, top, width, height, shiftX, shiftY)
   }
 }

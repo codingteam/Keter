@@ -1,11 +1,14 @@
 package ru.org.codingteam.keter.game.actions
 
-import ru.org.codingteam.keter.game.GameState
-import ru.org.codingteam.keter.game.objects.{Actor, ObjectPosition}
+import ru.org.codingteam.keter.game.IEngine
+import ru.org.codingteam.keter.game.objects.Actor
+import ru.org.codingteam.keter.map.UniverseSnapshot
 
-case class Action(actor: Actor, definition: IActionDefinition, target: ObjectPosition) {
+trait Action {
+  def actor: Actor
 
-  def duration(state: GameState) = definition.duration(actor, target, state)
-  def process(state: GameState) = definition.process(actor, target, state)
+  def duration(state: UniverseSnapshot): Long
+
+  def process(state: UniverseSnapshot, engine: IEngine): UniverseSnapshot
 
 }

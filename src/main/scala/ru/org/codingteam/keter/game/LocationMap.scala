@@ -1,9 +1,12 @@
+/*
+
 package ru.org.codingteam.keter.game
 
 import ru.org.codingteam.keter.game.actions.{MeleeAttackAction, WalkAction}
 import ru.org.codingteam.keter.game.objects._
 import ru.org.codingteam.keter.game.objects.behaviors.{PlayerBehavior, RandomBehavior}
 import ru.org.codingteam.keter.game.objects.equipment.EquipmentItem
+import ru.org.codingteam.keter.map.ObjectPosition
 import ru.org.codingteam.keter.util.Logging
 import ru.org.codingteam.rotjs.interface.Arena
 
@@ -117,3 +120,4 @@ object LocationMap {
   }
 
 }
+*/
