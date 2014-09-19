@@ -1,17 +1,18 @@
 package ru.org.codingteam.keter.game
 
 import ru.org.codingteam.keter.game.actions._
+import ru.org.codingteam.keter.game.objects._
 import ru.org.codingteam.keter.game.objects.behaviors.{PlayerBehavior, RandomBehavior}
 import ru.org.codingteam.keter.game.objects.equipment.EquipmentItem
-import ru.org.codingteam.keter.game.objects.{Surface, _}
 import ru.org.codingteam.keter.map._
+import ru.org.codingteam.keter.util.Logging
 
-object Location {
+object Location extends Logging {
 
   val foundation = Faction("SCP Foundation")
   val monsters = Faction("GOC")
 
-  val map1 =
+  val mapDef1 =
     """
       |###########################
       |#.........................#
@@ -21,23 +22,48 @@ object Location {
       |#...................#.....#
       |#...................#.....#
       |#...................#######
-      |#.........................#
+      |#......................>..#
       |#.....................#####
       |#######################
       | """.stripMargin.trim
 
-  def submapFromString(definition: String) = new Submap(
-    definition.split('\n') map {
-      row => row map {
-        case '#' => Some(Wall())
-        case '.' => Some(Floor())
-        case _ => None
-      }
-    })
+  val mapDef2 =
+    """
+      |###########################
+      |#...................#...>.#
+      |#...................#.....#
+      |#...................#.....#
+      |#......######..######.....#
+      |#......#..................#
+      |#......#..................#
+      |#......#............#######
+      |#......#..................#
+      |#......#..................#
+      |###########################
+      | """.stripMargin.trim
 
+  def submapFromString(definition: String, jumps: Map[(Int, Int), Jump] = Map()) = {
+    val rows = definition.split('\n')
+    new Submap(
+      for (y <- rows.indices; row = rows(y)) yield
+        for (x <- row.indices; c = row(x)) yield
+          c match {
+            case '#' => Some(Wall())
+            case '.' => Some(Floor())
+            case '>' =>
+              log.debug(s"Submap build: jump at ($y,$x).")
+              jumps.get((x, y))
+            case _ => None
+          })
+  }
 
   def createLocation(): UniverseSnapshot = {
-    val submap1 = submapFromString(map1)
+
+    lazy val submap1: Submap = submapFromString(mapDef1, Map((23, 8) -> jump1))
+    lazy val submap2: Submap = submapFromString(mapDef2, Map((24, 1) -> jump2))
+    lazy val jump1: Jump = Jump(_ => submap2, c => ActorCoords(3, 8, c.t), identity)
+    lazy val jump2: Jump = Jump(_ => submap1, c => ActorCoords(23, 6, c.t), _ * SubspaceMatrix(-1, 0, 0, 0, 1, 0, 0, 0, 1))
+
     val playerId = ActorId()
     val player = human(
       new PlayerBehavior,
