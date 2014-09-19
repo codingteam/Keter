@@ -6,3 +6,5 @@
 *.log
 
 .idea/
+.idea_modules/
+
