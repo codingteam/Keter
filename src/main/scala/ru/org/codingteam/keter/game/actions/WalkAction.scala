@@ -9,11 +9,11 @@ case class WalkAction(actor: Actor,
 
   override def process(state: UniverseSnapshot, engine: IEngine) = {
     val newPosition = actor.position.moveWithJumps(move)
-    (newPosition.surfaceAt match {
+    newPosition.surfaceAt match {
       case Some(s) if s.passable =>
         state.updatedActor(actor.id)(a => a.copy(position = newPosition))
       case _ => state
-    }) updatedTimestamp (_ + duration(state))
+    }
   }
 
   override def duration(state: UniverseSnapshot) = (100 * move.length).toLong
