@@ -40,7 +40,9 @@ package object map {
 
   case class ObjectCoords(x: Int, y: Int)
 
-  case class Move(dx: Int, dy: Int, dt: Int = 0)
+  case class Move(dx: Int, dy: Int, dt: Int = 0) {
+    def length = math.hypot(dx, dy)
+  }
 
   class Submap(val surfaces: IndexedSeq[IndexedSeq[Option[Surface]]]) {
     def surfaceAt(x: Int, y: Int): Option[Surface] = {
