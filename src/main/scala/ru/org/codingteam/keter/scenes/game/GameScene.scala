@@ -4,8 +4,9 @@ import org.scalajs.dom.KeyboardEvent
 import ru.org.codingteam.keter.game.Engine
 import ru.org.codingteam.keter.game.actions._
 import ru.org.codingteam.keter.game.objects.behaviors.PlayerBehavior
-import ru.org.codingteam.keter.game.objects.{Actor, ActorActive, ActorInactive}
-import ru.org.codingteam.keter.map.{Move, RenderUtils}
+import ru.org.codingteam.keter.game.objects.{Actor, ActorActive, ActorInactive, GameObject}
+import ru.org.codingteam.keter.map.TraverseUtils.{BoardCell, BoardCoords}
+import ru.org.codingteam.keter.map.{Move, Surface, TraverseUtils}
 import ru.org.codingteam.keter.scenes.Scene
 import ru.org.codingteam.keter.util.Logging
 import ru.org.codingteam.rotjs.interface.{Display, ROT}
@@ -54,9 +55,16 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
     log.debug("Drawing field")
     val offset = 10
     val fieldView = display.viewport(1, 1, display.width - 2, display.height - 5, offset, offset)
-    val tiles = RenderUtils.renderToSeq(engine.universe, -offset, offset, -offset, offset)
-    tiles foreach {
-      case (x, y, tile) => fieldView.draw(x, y, tile)
+
+    val cells = TraverseUtils.traverseUniverse(engine.universe, player.position, -offset, offset, -offset, offset)
+    cells foreach {
+      case BoardCell(BoardCoords(x, y), _pos, surface, objects, actors, player) =>
+        val obj = player orElse actors.headOption orElse objects.headOption orElse surface
+        obj foreach {
+          case a: Actor => fieldView.draw(x, y, a.tile, getColor(a))
+          case o: GameObject => fieldView.draw(x, y, o.tile)
+          case s: Surface => fieldView.draw(x, y, s.tile)
+        }
     }
     // display stats.
     val statsView = display.viewport(0, display.height - 2, display.width, 2)
