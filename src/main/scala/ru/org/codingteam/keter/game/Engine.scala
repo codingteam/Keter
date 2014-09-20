@@ -40,12 +40,12 @@ class Engine(val universe: Universe) extends IEngine with Logging {
     val action = eventQueue.get().asInstanceOf[Action]
     log.debug(s"Processing action $action")
     var nextState = universe.current
-    nextState = nextState.updatedTimestamp(_ => eventQueue.getTime().toLong)
     if (action.actor.state == ActorActive) {
       nextState = action.process(nextState, this)
     }
 
     nextState = performGlobalActions(nextState)
+    nextState = nextState.updatedTimestamp(_ => eventQueue.getTime().toLong)
     universe.current = nextState
     callbacks.foreach(_(nextState))
     nextState.findActor(action.actor.id) match {

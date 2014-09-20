@@ -15,7 +15,7 @@ case class MeleeAttackAction(actor: Actor,
           a.copy(stats = a.stats.copy(health = a.stats.health - damage))
         else
           a
-      }).updatedTimestamp(_ + duration(state))
+      })
     } else {
       engine.addMessage(s"$actor tries to attack the $target but there is nothing to attack")
       state
