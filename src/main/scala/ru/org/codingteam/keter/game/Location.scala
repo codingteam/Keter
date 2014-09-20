@@ -1,9 +1,8 @@
 package ru.org.codingteam.keter.game
 
-import ru.org.codingteam.keter.game.actions._
 import ru.org.codingteam.keter.game.objects._
 import ru.org.codingteam.keter.game.objects.behaviors.{PlayerBehavior, RandomBehavior}
-import ru.org.codingteam.keter.game.objects.equipment.EquipmentItem
+import ru.org.codingteam.keter.game.objects.equipment.{EquipmentItem, MeleeAttackCapability, WalkCapability}
 import ru.org.codingteam.keter.map._
 import ru.org.codingteam.keter.util.Logging
 
