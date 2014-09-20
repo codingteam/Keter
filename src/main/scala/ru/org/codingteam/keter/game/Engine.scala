@@ -1,72 +1,66 @@
 package ru.org.codingteam.keter.game
 
 import ru.org.codingteam.keter.game.actions.Action
-import ru.org.codingteam.keter.game.objects.{Actor, ActorActive, ActorId, ActorInactive}
+import ru.org.codingteam.keter.game.objects.{Actor, ActorActive, ActorInactive}
+import ru.org.codingteam.keter.map.{Universe, UniverseSnapshot}
 import ru.org.codingteam.keter.util.Logging
 import ru.org.codingteam.rotjs.interface.EventQueue
 
 import scala.concurrent.Future
 import scala.util.Success
 
-class Engine(var gameState: GameState) extends Logging {
+class Engine(val universe: Universe) extends IEngine with Logging {
 
   val eventQueue = new EventQueue()
-  var callbacks = List[GameState => Unit]()
 
   implicit val executionContext = scala.scalajs.concurrent.JSExecutionContext.runNow
 
   def start(): Unit = {
     // Initialize all actors:
+    val currentState = universe.current
     val actions = Future.sequence(
-      gameState.map.actors.values.map(actor => actor.getNextAction(gameState).map((actor, _))))
+      currentState.actors.map(actor => actor.getNextAction(currentState).map((actor, _))))
     actions andThen {
       case Success(as) =>
         as.foreach {
           case (actor, action) =>
-            eventQueue.add(action, action.duration(gameState))
+            eventQueue.add(action, action.duration(currentState))
         }
 
         engineLoop()
     }
   }
 
-  def registerCallback(callback: GameState => Unit): Unit = {
-    callbacks = callback +: callbacks
-  }
-
   private def engineLoop(): Unit = {
     val action = eventQueue.get().asInstanceOf[Action]
     log.debug(s"Processing action $action")
-
+    var nextState = universe.current
     if (action.actor.state == ActorActive) {
-      gameState = action.process(gameState.copy(time = eventQueue.getTime().toLong))
+      nextState = action.process(nextState, this)
     }
 
-    gameState = performGlobalActions(gameState)
-    callbacks.foreach(_(gameState))
-
-    val actor = gameState.map.actors(action.actor.id)
-    if (actor.state == ActorActive) {
-      actor.getNextAction(gameState) andThen {
-        case Success(a) =>
-          eventQueue.add(a, a.duration(gameState))
-          engineLoop()
-      }
-    } else {
-      engineLoop()
+    nextState = performGlobalActions(nextState)
+    nextState = nextState.updatedTimestamp(_ => eventQueue.getTime().toLong)
+    universe.current = nextState
+    nextState.findActor(action.actor.id) match {
+      case Some(actor) if actor.state == ActorActive =>
+        actor.getNextAction(nextState) andThen {
+          case Success(nextAction) =>
+            eventQueue.add(nextAction, nextAction.duration(nextState))
+            engineLoop()
+        }
+      case _ =>
+        engineLoop()
     }
   }
 
-  private def performGlobalActions(state: GameState): GameState = {
-    val map = state.map
-    state.copy(map = map.copy(actors = checkDeaths(map.actors)))
+  private def performGlobalActions(state: UniverseSnapshot): UniverseSnapshot = {
+    state.copy(actors = checkDeaths(state.actors))
   }
 
-  private def checkDeaths(actors: Map[ActorId, Actor]): Map[ActorId, Actor] = {
-    actors.map({ case (id, actor) =>
-      val newActor = if (actor.stats.health < 0) actor.copy(state = ActorInactive) else actor
-      (id, newActor)
-    })
+  private def checkDeaths(actors: Seq[Actor]): Seq[Actor] = {
+    actors.map(actor => if (actor.stats.health < 0) actor.copy(state = ActorInactive) else actor)
   }
 
+  override def addMessage(msg: String): Unit = universe.addMessage(msg)
 }

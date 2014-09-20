@@ -1,8 +1,8 @@
 package ru.org.codingteam.keter.game.objects.behaviors
 
-import ru.org.codingteam.keter.game.GameState
-import ru.org.codingteam.keter.game.actions.{Action, WalkAction, WaitAction}
-import ru.org.codingteam.keter.game.objects.{ObjectPosition, IActorBehavior, Actor}
+import ru.org.codingteam.keter.game.actions.{WaitAction, WalkAction}
+import ru.org.codingteam.keter.game.objects.{Actor, IActorBehavior}
+import ru.org.codingteam.keter.map.{Move, UniverseSnapshot}
 
 import scala.concurrent.Future
 import scala.util.Random
@@ -11,13 +11,11 @@ object RandomBehavior extends IActorBehavior {
 
   val random = Random
 
-  override def getNextAction(actor: Actor, state: GameState) = Future.successful({
-    val (x, y) = (random.nextInt(3)-1, random.nextInt(3)-1)
-    if (x == 0 && y == 0) {
-      Action(actor, WaitAction, actor.position)
-    } else {
-      Action(actor, WalkAction, actor.position + ObjectPosition(x, y))
+  override def getNextAction(actor: Actor, state: UniverseSnapshot) = Future.successful {
+    Move(random.nextInt(3) - 1, random.nextInt(3) - 1) match {
+      case Move(0, 0, _) => WaitAction(actor)
+      case move => WalkAction(actor, move)
     }
-  })
+  }
 
 }
