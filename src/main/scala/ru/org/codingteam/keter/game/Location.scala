@@ -2,6 +2,7 @@ package ru.org.codingteam.keter.game
 
 import ru.org.codingteam.keter.game.objects._
 import ru.org.codingteam.keter.game.objects.behaviors.{PlayerBehavior, RandomBehavior}
+import ru.org.codingteam.keter.game.objects.equipment.bodyparts._
 import ru.org.codingteam.keter.game.objects.equipment.{EquipmentItem, MeleeAttackCapability, WalkCapability}
 import ru.org.codingteam.keter.map._
 import ru.org.codingteam.keter.util.Logging
@@ -73,7 +74,15 @@ object Location extends Logging {
       ActorPosition(
         submap = submap1,
         coords = ActorCoords(2, 3),
-        subspaceMatrix = SubspaceMatrix.identity)
+        subspaceMatrix = SubspaceMatrix.identity),
+      Set[Bodypart](
+        Leg("left leg", 75.0, Seq(WalkCapability)),
+        Leg("right leg", 75.0, Seq(WalkCapability)),
+        Arm("left arm", 50.0, Seq(MeleeAttackCapability)),
+        Arm("right arm", 50.0, Seq(MeleeAttackCapability)),
+        Head("head", 75.0, Seq()),
+        Torso("torso", 100.0, Seq())
+      )
     )
     val scp = human(
       RandomBehavior,
@@ -84,7 +93,15 @@ object Location extends Logging {
       ActorPosition(
         submap = submap1,
         coords = ActorCoords(8, 9),
-        subspaceMatrix = SubspaceMatrix.identity)
+        subspaceMatrix = SubspaceMatrix.identity),
+      Set[Bodypart](
+        Leg("left leg", 75.0, Seq(WalkCapability)),
+        Leg("right leg", 75.0, Seq(WalkCapability)),
+        Arm("left arm", 50.0, Seq(MeleeAttackCapability)),
+        Arm("right arm", 50.0, Seq(MeleeAttackCapability)),
+        Head("head", 75.0, Seq()),
+        Torso("torso", 100.0, Seq())
+      )
     )
     val door = Door(
       ActorId(),
@@ -107,8 +124,9 @@ object Location extends Logging {
             name: String,
             tile: String,
             id: ActorId,
-            position: ActorPosition): Actor = {
-    val legs = EquipmentItem("Legs", Seq(WalkCapability))
+            position: ActorPosition,
+            bodyparts: Set[Bodypart]): Actor = {
+    /*val legs = EquipmentItem("Legs", Seq(WalkCapability))
     val hands = EquipmentItem("Hands", Seq(MeleeAttackCapability))
     Actor(
       id,
@@ -118,8 +136,19 @@ object Location extends Logging {
       ActorActive,
       behavior,
       StatTable(health = 100),
-      Vector(legs, hands),
-      position
-    )
+      position,
+      bodyparts
+      )*/
+      Actor(id,
+           faction,
+           name,
+           tile,
+           ActorActive,
+           behavior,
+           StatTable(health = 100),
+           Seq[EquipmentItem](),
+           position: ActorPosition,
+           bodyparts: Set[Bodypart]
+     )
   }
 }

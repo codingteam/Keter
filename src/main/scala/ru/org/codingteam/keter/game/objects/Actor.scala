@@ -1,7 +1,9 @@
 package ru.org.codingteam.keter.game.objects
 
 import ru.org.codingteam.keter.game.Faction
-import ru.org.codingteam.keter.game.objects.equipment.EquipmentItem
+import ru.org.codingteam.keter.game.actions.Action
+import ru.org.codingteam.keter.game.objects.equipment.{Capability, EquipmentItem}
+import ru.org.codingteam.keter.game.objects.equipment.bodyparts.Bodypart
 import ru.org.codingteam.keter.map.{ActorPosition, UniverseSnapshot}
 
 case class Actor(id: ActorId,
@@ -12,8 +14,12 @@ case class Actor(id: ActorId,
                  behavior: IActorBehavior,
                  stats: StatTable,
                  equipment: Seq[EquipmentItem],
-                 position: ActorPosition) {
+                 position: ActorPosition,
+                 bodyparts: Set[Bodypart]) {
 
   def getNextAction(state: UniverseSnapshot) = behavior.getNextAction(this, state)
+
+  /*def can(can: Any) = {
+  }*/
 
 }

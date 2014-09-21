@@ -1,6 +1,6 @@
 package ru.org.codingteam.keter.game.objects.behaviors
 
-import ru.org.codingteam.keter.game.actions.Action
+import ru.org.codingteam.keter.game.actions.{WalkAction, Action}
 import ru.org.codingteam.keter.game.objects.{Actor, IActorBehavior}
 import ru.org.codingteam.keter.map.UniverseSnapshot
 
@@ -13,6 +13,7 @@ class PlayerBehavior extends IActorBehavior {
   var nextAction = Promise[Action]()
 
   override def getNextAction(actor: Actor, gameState: UniverseSnapshot): Future[Action] = nextAction.future.andThen({
+    /*case WalkAction => if (actor.can(WalkAction)) Promise[Action]()*/
     case _ => nextAction = Promise[Action]()
   })
 
