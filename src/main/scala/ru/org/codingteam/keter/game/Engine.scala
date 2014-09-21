@@ -12,7 +12,6 @@ import scala.util.Success
 class Engine(val universe: Universe) extends IEngine with Logging {
 
   val eventQueue = new EventQueue()
-  var callbacks = List[UniverseSnapshot => Unit]()
 
   implicit val executionContext = scala.scalajs.concurrent.JSExecutionContext.runNow
 
@@ -32,10 +31,6 @@ class Engine(val universe: Universe) extends IEngine with Logging {
     }
   }
 
-  def registerCallback(callback: UniverseSnapshot => Unit): Unit = {
-    callbacks +:= callback
-  }
-
   private def engineLoop(): Unit = {
     val action = eventQueue.get().asInstanceOf[Action]
     log.debug(s"Processing action $action")
@@ -47,7 +42,6 @@ class Engine(val universe: Universe) extends IEngine with Logging {
     nextState = performGlobalActions(nextState)
     nextState = nextState.updatedTimestamp(_ => eventQueue.getTime().toLong)
     universe.current = nextState
-    callbacks.foreach(_(nextState))
     nextState.findActor(action.actor.id) match {
       case Some(actor) if actor.state == ActorActive =>
         actor.getNextAction(nextState) andThen {
