@@ -56,9 +56,9 @@ package object map {
 
   case class Floor() extends Surface(name = "Floor", tile = ".", passable = true)
 
-  case class Jump(submapFunc: Submap => Submap,
-                  coordsFunc: ActorCoords => ActorCoords,
-                  matrixFunc: SubspaceMatrix => SubspaceMatrix) extends Surface(name = "Jump", tile = ">", passable = true)
+  case class Jump(submapFunc: Submap => Submap = identity,
+                  coordsFunc: ActorCoords => ActorCoords = identity,
+                  matrixFunc: SubspaceMatrix => SubspaceMatrix = identity) extends Surface(name = "Jump", tile = ">", passable = true)
 
   case class SubspaceMatrix(m00: Double, m01: Double, m02: Double,
                             m10: Double, m11: Double, m12: Double,
@@ -118,6 +118,17 @@ package object map {
     def findActor(id: ActorId): Option[Actor] = actors find (_.id == id)
 
     def findActors(position: ObjectPosition) = actors filter (_.position.objectPosition == position)
+
+    def createActorsMap: Map[ObjectPosition, List[Actor]] = {
+      var map = Map[ObjectPosition, List[Actor]]()
+      actors foreach {
+        a =>
+          val pos = a.position.objectPosition
+          val objects = map.getOrElse(pos, Nil)
+          map = map.updated(pos, objects :+ a)
+      }
+      map
+    }
   }
 
   sealed class Universe {
