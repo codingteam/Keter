@@ -6,8 +6,6 @@ import ru.org.codingteam.keter.game.objects.equipment.{MeleeAttackCapability, Wa
 import ru.org.codingteam.keter.game.objects.equipment.bodyparts.Bodypart
 import ru.org.codingteam.keter.map.{ActorPosition, UniverseSnapshot}
 
-import scala.util.{Try, Success}
-
 case class Actor(id: ActorId,
                  faction: Faction,
                  name: String,
