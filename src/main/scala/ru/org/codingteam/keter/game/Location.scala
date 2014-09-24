@@ -74,15 +74,7 @@ object Location extends Logging {
       ActorPosition(
         submap = submap1,
         coords = ActorCoords(2, 3),
-        subspaceMatrix = SubspaceMatrix.identity),
-      Set[Bodypart](
-        Leg("left leg", 75.0),
-        Leg("right leg", 75.0),
-        Arm("left arm", 50.0),
-        Arm("right arm", 50.0),
-        Head("head", 75.0),
-        Torso("torso", 100.0)
-      )
+        subspaceMatrix = SubspaceMatrix.identity)
     )
     val scp = human(
       RandomBehavior,
@@ -93,15 +85,7 @@ object Location extends Logging {
       ActorPosition(
         submap = submap1,
         coords = ActorCoords(8, 9),
-        subspaceMatrix = SubspaceMatrix.identity),
-      Set[Bodypart](
-        Leg("left leg", 75.0),
-        Leg("right leg", 75.0),
-        Arm("left arm", 50.0),
-        Arm("right arm", 50.0),
-        Head("head", 75.0),
-        Torso("torso", 100.0)
-      )
+        subspaceMatrix = SubspaceMatrix.identity)
     )
     val door = Door(
       ActorId(),
@@ -125,7 +109,15 @@ object Location extends Logging {
             tile: String,
             id: ActorId,
             position: ActorPosition,
-            bodyparts: Set[Bodypart]): Actor = {
+            bodyparts: Set[Bodypart] = Set[Bodypart](
+              Leg("left leg", 75.0),
+              Leg("right leg", 75.0),
+              Arm("left arm", 50.0),
+              Arm("right arm", 50.0),
+              Head("head", 75.0),
+              Torso("torso", 100.0)
+              )
+            ): Actor = {
       Actor(id,
            faction,
            name,
