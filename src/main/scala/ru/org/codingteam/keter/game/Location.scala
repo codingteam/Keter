@@ -76,12 +76,12 @@ object Location extends Logging {
         coords = ActorCoords(2, 3),
         subspaceMatrix = SubspaceMatrix.identity),
       Set[Bodypart](
-        Leg("left leg", 75.0, Seq(WalkCapability)),
-        Leg("right leg", 75.0, Seq(WalkCapability)),
-        Arm("left arm", 50.0, Seq(MeleeAttackCapability)),
-        Arm("right arm", 50.0, Seq(MeleeAttackCapability)),
-        Head("head", 75.0, Seq()),
-        Torso("torso", 100.0, Seq())
+        Leg("left leg", 75.0),
+        Leg("right leg", 75.0),
+        Arm("left arm", 50.0),
+        Arm("right arm", 50.0),
+        Head("head", 75.0),
+        Torso("torso", 100.0)
       )
     )
     val scp = human(
@@ -95,12 +95,12 @@ object Location extends Logging {
         coords = ActorCoords(8, 9),
         subspaceMatrix = SubspaceMatrix.identity),
       Set[Bodypart](
-        Leg("left leg", 75.0, Seq(WalkCapability)),
-        Leg("right leg", 75.0, Seq(WalkCapability)),
-        Arm("left arm", 50.0, Seq(MeleeAttackCapability)),
-        Arm("right arm", 50.0, Seq(MeleeAttackCapability)),
-        Head("head", 75.0, Seq()),
-        Torso("torso", 100.0, Seq())
+        Leg("left leg", 75.0),
+        Leg("right leg", 75.0),
+        Arm("left arm", 50.0),
+        Arm("right arm", 50.0),
+        Head("head", 75.0),
+        Torso("torso", 100.0)
       )
     )
     val door = Door(
@@ -126,19 +126,6 @@ object Location extends Logging {
             id: ActorId,
             position: ActorPosition,
             bodyparts: Set[Bodypart]): Actor = {
-    /*val legs = EquipmentItem("Legs", Seq(WalkCapability))
-    val hands = EquipmentItem("Hands", Seq(MeleeAttackCapability))
-    Actor(
-      id,
-      faction,
-      name,
-      tile,
-      ActorActive,
-      behavior,
-      StatTable(health = 100),
-      position,
-      bodyparts
-      )*/
       Actor(id,
            faction,
            name,
