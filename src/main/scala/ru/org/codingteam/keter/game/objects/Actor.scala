@@ -22,10 +22,10 @@ case class Actor(id: ActorId,
   def can(act: Action) = {
     act match {
       case act:WalkAction => {
-        !bodyparts.forall(bodypart => !bodypart.actions.contains(WalkCapability))
+        !bodyparts.forall(bodypart => !bodypart.capabilities.contains(WalkCapability))
       }
       case act:MeleeAttackAction => {
-        !bodyparts.forall(bodypart => !bodypart.actions.contains(MeleeAttackCapability))
+        !bodyparts.forall(bodypart => !bodypart.capabilities.contains(MeleeAttackCapability))
       }
       case act:WaitAction => {
         true // no requirements for waiting
