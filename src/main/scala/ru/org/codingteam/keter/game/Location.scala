@@ -2,6 +2,7 @@ package ru.org.codingteam.keter.game
 
 import ru.org.codingteam.keter.game.objects._
 import ru.org.codingteam.keter.game.objects.behaviors.{PlayerBehavior, RandomBehavior}
+import ru.org.codingteam.keter.game.objects.equipment.bodyparts._
 import ru.org.codingteam.keter.game.objects.equipment.{EquipmentItem, MeleeAttackCapability, WalkCapability}
 import ru.org.codingteam.keter.map._
 import ru.org.codingteam.keter.util.Logging
@@ -107,19 +108,26 @@ object Location extends Logging {
             name: String,
             tile: String,
             id: ActorId,
-            position: ActorPosition): Actor = {
-    val legs = EquipmentItem("Legs", Seq(WalkCapability))
-    val hands = EquipmentItem("Hands", Seq(MeleeAttackCapability))
-    Actor(
-      id,
-      faction,
-      name,
-      tile,
-      ActorActive,
-      behavior,
-      StatTable(health = 100),
-      Vector(legs, hands),
-      position
-    )
+            position: ActorPosition,
+            bodyparts: Set[Bodypart] = Set[Bodypart](
+              Leg("left leg", 75.0),
+              Leg("right leg", 75.0),
+              Arm("left arm", 50.0),
+              Arm("right arm", 50.0),
+              Head("head", 75.0),
+              Torso("torso", 100.0)
+              )
+            ): Actor = {
+      Actor(id,
+           faction,
+           name,
+           tile,
+           ActorActive,
+           behavior,
+           StatTable(health = 100),
+           Seq[EquipmentItem](),
+           position: ActorPosition,
+           bodyparts: Set[Bodypart]
+     )
   }
 }
