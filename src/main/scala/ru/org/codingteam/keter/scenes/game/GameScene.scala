@@ -77,7 +77,7 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
   private def state = engine.universe.current
 
   private def processAction(action: Action): Unit = {
-    if (player.can(action)) {
+    if (action.canAct(player)) {
       log.debug(s"Scheduling player action: $action")
       player.behavior match {
         case pb: PlayerBehavior =>
