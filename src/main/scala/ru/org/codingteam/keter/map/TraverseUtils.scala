@@ -2,12 +2,16 @@ package ru.org.codingteam.keter.map
 
 import ru.org.codingteam.keter.game.objects.{Actor, GameObject}
 
+import scala.annotation.tailrec
+
 object TraverseUtils {
 
   case class BoardCoords(x: Int, y: Int) {
     def move(m: Move) = BoardCoords(x + m.dx, y + m.dy)
 
     def to(bc: BoardCoords) = Move(bc.x - x, bc.y - y)
+
+    def atCenter = x == 0 && y == 0
   }
 
   case class BoardCell(coords: BoardCoords,
@@ -90,18 +94,51 @@ object TraverseUtils {
     override def traverse(universe: Universe,
                           from: ActorPosition,
                           topLimit: Int, bottomLimit: Int, leftLimit: Int, rightLimit: Int): Seq[BoardCell] = {
-      // TODO: computational complexity is O(N^3) now, and it should be improved by dynamic programming...
-      val cts = for (y <- topLimit to bottomLimit; x <- leftLimit to rightLimit) yield {
-        val (ax, ay) = (math abs x, math abs y)
-        val (sx, sy) = (math signum x, math signum y)
-        val cs = if (ax >= ay)
-          for (i <- 0 to ax; xx = i * sx; yy = (i * sy * ay.toDouble / ax).round.toInt) yield BoardCoords(xx, yy)
-        else
-          for (i <- 0 to ay; yy = i * sy; xx = (i * sx * ax.toDouble / ay).round.toInt) yield BoardCoords(xx, yy)
-        val mvs = cs zip cs.tail map { case (f, t) => f to t}
-        val ap = mvs.foldLeft(from)(_ moveWithJumps _)
-        CoordsTuple(BoardCoords(x, y), ap)
+      val dirMap = Array.ofDim[ActorPosition](bottomLimit - topLimit + 1, rightLimit - leftLimit + 1,
+        Seq(topLimit, bottomLimit, leftLimit, rightLimit).max + 1)
+      def getDirectionCache(bc: BoardCoords): Array[ActorPosition] = {
+        val newBc = {
+          @tailrec def nod(a: Int, b: Int): Int = a % b match {
+            case 0 => b
+            case q => nod(b, q)
+          }
+          @inline def nodChecked(a: Int, b: Int) = if (a > b) nod(b, a) else nod(a, b)
+          bc match {
+            case BoardCoords(x, y) if !(x == 0 && y == 0) =>
+              val q = nodChecked(math abs x, math abs y)
+              BoardCoords(x / q, y / q)
+            case _ => bc
+          }
+        }
+        dirMap(newBc.y - topLimit)(newBc.x - leftLimit)
       }
+      @inline def getCacheIndex(bc: BoardCoords) = math.max(math abs bc.x, math abs bc.y)
+      def computeAP(bc: BoardCoords): ActorPosition = {
+        val zMax = getCacheIndex(bc)
+        val dir = getDirectionCache(bc)
+        @inline def prevBC(z: Int) = BoardCoords((z.toDouble / zMax * bc.x).round.toInt, (z.toDouble / zMax * bc.y).round.toInt)
+        def compute(z: Int, bc: BoardCoords): ActorPosition = {
+          if (z == 0)
+            from
+          else
+            dir(z) match {
+              case null =>
+                val pbc = prevBC(z - 1)
+                val pap = compute(z - 1, pbc)
+                val move = pbc to bc
+                val ap = pap moveWithJumps move
+                dir(z) = ap
+                ap
+              case ap =>
+                ap
+            }
+        }
+        compute(zMax, bc)
+      }
+
+      val cts = for (y <- topLimit to bottomLimit; x <- leftLimit to rightLimit; bc = BoardCoords(x, y)) yield
+        CoordsTuple(bc, computeAP(bc))
+
       coordsTuplesToBoardCells(universe.current, cts)
     }
   }
