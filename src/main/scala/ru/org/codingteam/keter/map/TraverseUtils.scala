@@ -143,4 +143,62 @@ object TraverseUtils {
     }
   }
 
+  object DirectionLimitedLookTraverseMethod extends TraverseMethod {
+
+    override def traverse(universe: Universe,
+                          from: ActorPosition,
+                          topLimit: Int, bottomLimit: Int, leftLimit: Int, rightLimit: Int): Seq[BoardCell] = {
+      val dirMap = Array.ofDim[Option[ActorPosition]](bottomLimit - topLimit + 1, rightLimit - leftLimit + 1,
+        Seq(topLimit, bottomLimit, leftLimit, rightLimit).max + 1)
+      def getDirectionCache(bc: BoardCoords): Array[Option[ActorPosition]] = {
+        val newBc = {
+          @tailrec def nod(a: Int, b: Int): Int = a % b match {
+            case 0 => b
+            case q => nod(b, q)
+          }
+          @inline def nodChecked(a: Int, b: Int) = if (a > b) nod(b, a) else nod(a, b)
+          bc match {
+            case BoardCoords(x, y) if !(x == 0 && y == 0) =>
+              val q = nodChecked(math abs x, math abs y)
+              BoardCoords(x / q, y / q)
+            case _ => bc
+          }
+        }
+        dirMap(newBc.y - topLimit)(newBc.x - leftLimit)
+      }
+      @inline def getCacheIndex(bc: BoardCoords) = math.max(math abs bc.x, math abs bc.y)
+      def computeAP(bc: BoardCoords): Option[ActorPosition] = {
+        val zMax = getCacheIndex(bc)
+        val dir = getDirectionCache(bc)
+        @inline def prevBC(z: Int) = BoardCoords((z.toDouble / zMax * bc.x).round.toInt, (z.toDouble / zMax * bc.y).round.toInt)
+        def compute(z: Int, bc: BoardCoords): Option[ActorPosition] = {
+          if (z == 0)
+            Some(from)
+          else
+            dir(z) match {
+              case null =>
+                val pbc = prevBC(z - 1)
+                val pap = compute(z - 1, pbc)
+                val move = pbc to bc
+                val ap = pap match {
+                  case Some(p) if p.surfaceAt.isDefined && p.surfaceAt.get.passable =>
+                    Some(p moveWithJumps move)
+                  case _ => None
+                }
+                dir(z) = ap
+                ap
+              case ap =>
+                ap
+            }
+        }
+        compute(zMax, bc)
+      }
+
+      val cts = for (y <- topLimit to bottomLimit; x <- leftLimit to rightLimit; bc = BoardCoords(x, y); ap <- computeAP(bc)) yield
+        CoordsTuple(bc, ap)
+
+      coordsTuplesToBoardCells(universe.current, cts)
+    }
+  }
+
 }
