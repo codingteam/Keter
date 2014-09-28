@@ -24,7 +24,7 @@ object Location extends Logging {
       |#...................#######
       |#......................>..#
       |#.....................#####
-      |#######################
+      |#######>###############
       | """.stripMargin.trim
 
   val mapDef2 =
@@ -40,6 +40,19 @@ object Location extends Logging {
       |#......#..................#
       |#......#..................#
       |###########################
+      | """.stripMargin.trim
+
+  val mapDef3 =
+    """
+      |####>#############
+      |>................>
+      |#..#..##..###....#
+      |####...####......#
+      |#......#..###..###
+      |#......#.........#
+      |#......#...#######
+      |#......#...#
+      |############
       | """.stripMargin.trim
 
   def submapFromString(definition: String, jumps: Map[(Int, Int), Jump] = Map()) = {
@@ -59,10 +72,15 @@ object Location extends Logging {
 
   def createLocation(): UniverseSnapshot = {
 
-    lazy val submap1: Submap = submapFromString(mapDef1, Map((23, 8) -> jump1))
-    lazy val submap2: Submap = submapFromString(mapDef2, Map((24, 1) -> jump2))
-    lazy val jump1: Jump = Jump(_ => submap2, c => ActorCoords(3, 8, c.t), identity)
-    lazy val jump2: Jump = Jump(_ => submap1, c => ActorCoords(23, 6, c.t), _ * SubspaceMatrix(-1, 0, 0, 0, 1, 0, 0, 0, 1))
+    lazy val submap1: Submap = submapFromString(mapDef1, Map((23, 8) -> jump11, (7, 10) -> jump12))
+    lazy val submap2: Submap = submapFromString(mapDef2, Map((24, 1) -> jump21))
+    lazy val submap3: Submap = submapFromString(mapDef3, Map((4, 0) -> jump31, (0, 1) -> jump32, (17, 1) -> jump33))
+    lazy val jump11: Jump = Jump(_ => submap2, c => ActorCoords(3, 8, c.t))
+    lazy val jump21: Jump = Jump(_ => submap1, c => ActorCoords(23, 6, c.t), _ * SubspaceMatrix(-1, 0, 0, 0, 1, 0, 0, 0, 1))
+    lazy val jump12: Jump = Jump(_ => submap3, c => ActorCoords(4, 1, c.t))
+    lazy val jump31: Jump = Jump(_ => submap1, c => ActorCoords(7, 9, c.t))
+    lazy val jump32: Jump = Jump(coordsFunc = _ + Move(16, 0))
+    lazy val jump33: Jump = Jump(coordsFunc = _ + Move(-16, 0))
 
     val playerId = ActorId()
     val player = human(

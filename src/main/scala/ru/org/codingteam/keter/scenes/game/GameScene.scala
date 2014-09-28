@@ -53,10 +53,11 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
     display.clear()
 
     log.debug("Drawing field")
-    val offset = 10
     val fieldContainer = display.viewport(1, 1, display.width - 2, display.height - 5)
-    val fieldView = fieldContainer.viewportCentered(offset * 2 + 1, offset * 2 + 1, shiftX = offset, shiftY = offset)
-    val cells = TraverseUtils.traverseUniverse(engine.universe, player.position, -offset, offset, -offset, offset)
+    val (offsetX, offsetY) = (fieldContainer.width / 2 - 1, fieldContainer.height / 2 - 1)
+    val (fieldWidth, fieldHeight) = (offsetX * 2 + 1, offsetY * 2 + 1)
+    val fieldView = fieldContainer.viewportCentered(fieldWidth, fieldHeight, shiftX = offsetX, shiftY = offsetY)
+    val cells = TraverseUtils.DirectionLookTraverseMethod.traverse(engine.universe, player.position, -offsetY, offsetY, -offsetX, offsetX)
     cells foreach {
       case BoardCell(BoardCoords(x, y), _pos, surface, objects, actors, player) =>
         val obj = player orElse actors.headOption orElse objects.headOption orElse surface
