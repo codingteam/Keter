@@ -2,6 +2,7 @@ package ru.org.codingteam.keter.game.actions
 
 import ru.org.codingteam.keter.game.IEngine
 import ru.org.codingteam.keter.game.objects.Actor
+import ru.org.codingteam.keter.game.objects.equipment.WalkCapability
 import ru.org.codingteam.keter.map.{Move, UniverseSnapshot}
 
 case class WalkAction(actor: Actor,
@@ -17,4 +18,9 @@ case class WalkAction(actor: Actor,
   }
 
   override def duration(state: UniverseSnapshot) = (100 * move.length).toLong
+
+  override def capabilities = Map(
+    WalkCapability -> 1
+  )
+
 }

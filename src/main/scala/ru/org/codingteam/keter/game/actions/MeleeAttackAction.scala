@@ -2,6 +2,7 @@ package ru.org.codingteam.keter.game.actions
 
 import ru.org.codingteam.keter.game.IEngine
 import ru.org.codingteam.keter.game.objects.Actor
+import ru.org.codingteam.keter.game.objects.equipment.MeleeAttackCapability
 import ru.org.codingteam.keter.map.{ObjectPosition, UniverseSnapshot}
 
 case class MeleeAttackAction(actor: Actor,
@@ -23,5 +24,9 @@ case class MeleeAttackAction(actor: Actor,
   }
 
   override def duration(state: UniverseSnapshot): Long = 80L
+
+  override def capabilities = Map(
+    MeleeAttackCapability -> 1
+  )
 
 }
