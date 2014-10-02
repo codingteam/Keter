@@ -95,7 +95,7 @@ object TraverseUtils {
                           from: ActorPosition,
                           topLimit: Int, bottomLimit: Int, leftLimit: Int, rightLimit: Int): Seq[BoardCell] = {
       val dirMap = Array.ofDim[ActorPosition](bottomLimit - topLimit + 1, rightLimit - leftLimit + 1,
-        Seq(topLimit, bottomLimit, leftLimit, rightLimit).max + 1)
+        Seq(topLimit, bottomLimit, leftLimit, rightLimit).map(_.abs).max + 1)
       def getDirectionCache(bc: BoardCoords): Array[ActorPosition] = {
         val newBc = {
           @tailrec def nod(a: Int, b: Int): Int = a % b match {
@@ -149,7 +149,7 @@ object TraverseUtils {
                           from: ActorPosition,
                           topLimit: Int, bottomLimit: Int, leftLimit: Int, rightLimit: Int): Seq[BoardCell] = {
       val dirMap = Array.ofDim[Option[ActorPosition]](bottomLimit - topLimit + 1, rightLimit - leftLimit + 1,
-        Seq(topLimit, bottomLimit, leftLimit, rightLimit).max + 1)
+        Seq(topLimit, bottomLimit, leftLimit, rightLimit).map(_.abs).max + 1)
       def getDirectionCache(bc: BoardCoords): Array[Option[ActorPosition]] = {
         val newBc = {
           @tailrec def nod(a: Int, b: Int): Int = a % b match {
