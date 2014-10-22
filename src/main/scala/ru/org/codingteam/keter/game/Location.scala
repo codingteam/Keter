@@ -2,8 +2,8 @@ package ru.org.codingteam.keter.game
 
 import ru.org.codingteam.keter.game.objects._
 import ru.org.codingteam.keter.game.objects.behaviors.{PlayerBehavior, RandomBehavior}
+import ru.org.codingteam.keter.game.objects.equipment.EquipmentItem
 import ru.org.codingteam.keter.game.objects.equipment.bodyparts._
-import ru.org.codingteam.keter.game.objects.equipment.{EquipmentItem, MeleeAttackCapability, WalkCapability}
 import ru.org.codingteam.keter.map._
 import ru.org.codingteam.keter.util.Logging
 
@@ -118,7 +118,8 @@ object Location extends Logging {
       actors = Seq(player, scp),
       playerId = playerId,
       timestamp = 0L,
-      objects = Map(ObjectPosition(submap1, ObjectCoords(5, 3)) -> List(door)))
+      objects = Map(ObjectPosition(submap1, ObjectCoords(5, 3)) -> List(door)),
+      globalEvents = EventQueue.empty)
   }
 
   def human(behavior: IActorBehavior,
@@ -133,19 +134,17 @@ object Location extends Logging {
               Arm("left arm", 50.0),
               Arm("right arm", 50.0),
               Head("head", 75.0),
-              Torso("torso", 100.0)
-              )
-            ): Actor = {
-      Actor(id,
-           faction,
-           name,
-           tile,
-           ActorActive,
-           behavior,
-           StatTable(health = 100),
-           Seq[EquipmentItem](),
-           position: ActorPosition,
-           bodyparts: Set[Bodypart]
-     )
+              Torso("torso", 100.0))): Actor = {
+    Actor(id,
+      faction,
+      name,
+      tile,
+      ActorActive,
+      behavior,
+      StatTable(health = 100),
+      Seq[EquipmentItem](),
+      position: ActorPosition,
+      bodyparts: Set[Bodypart]
+    )
   }
 }

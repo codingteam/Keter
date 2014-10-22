@@ -1,6 +1,6 @@
 package ru.org.codingteam.keter
 
-import ru.org.codingteam.keter.game.objects.{Actor, ActorId, GameObject}
+import ru.org.codingteam.keter.game.objects.{Actor, ActorId, EventQueue, GameObject}
 
 import scala.annotation.tailrec
 
@@ -97,7 +97,8 @@ package object map {
   case class UniverseSnapshot(timestamp: Long,
                               actors: Seq[Actor],
                               playerId: ActorId,
-                              objects: Map[ObjectPosition, List[GameObject]]) {
+                              objects: Map[ObjectPosition, List[GameObject]],
+                              globalEvents: EventQueue) {
     lazy val player = findActor(playerId).getOrElse {
       throw new IllegalStateException("actor with playerId must exist")
     }
