@@ -1,6 +1,7 @@
 package ru.org.codingteam.keter
 
 import ru.org.codingteam.keter.game.objects._
+import ru.org.codingteam.keter.util.Logging
 
 import scala.annotation.tailrec
 
@@ -98,7 +99,7 @@ package object map {
 
   case class UniverseSnapshot(actors: Map[ActorId, ActorLike],
                               playerId: Option[ActorId],
-                              globalEvents: EventQueue) {
+                              globalEvents: EventQueue) extends Logging {
     lazy val player = playerId flatMap findActor
 
     def updatedActor(id: ActorId)(f: ActorLike => ActorLike): UniverseSnapshot = {
@@ -129,36 +130,27 @@ package object map {
     }
 
     def nextEvent: Option[(Double, ScheduledAction, UniverseSnapshot)] = {
-      sealed trait EQHolder {
-        def delay: Option[Double]
-      }
-      case class ActorEQ(actor: ActorLike) extends EQHolder {
-        val delay = actor.nextEventDelay
-      }
-      case object UniverseEQ extends EQHolder {
-        val delay = globalEvents.nextEventDelay
-      }
-      val eqs = (UniverseEQ +: actors.values.toSeq.map(ActorEQ.apply)).filter(_.delay.isDefined)
-      if (eqs.isEmpty)
+      val delays = (globalEvents.nextEventDelay map ((_, this))).toIndexedSeq ++
+        actors.values.flatMap(a => a.nextEventDelay.map((_, a)))
+      log.debug(s"Timestamp: ${globalEvents.timestamp}; Event count: ${delays.size}")
+      if (delays.isEmpty)
         None
       else
-        Some(
-          eqs.minBy(_.delay.get) match {
-            case UniverseEQ =>
-              val delay = UniverseEQ.delay.get
-              val (nextTimestamp, nextAction) = globalEvents.nextEvent.get
-              val nextUniverse = copy(globalEvents = globalEvents.dropNextEvent(), actors = actors.mapValues(_.addTime(delay)))
-              (nextTimestamp, nextAction, nextUniverse)
-            case a@ActorEQ(actor) =>
-              val delay = a.delay.get
-              val nextTimestamp = globalEvents.timestamp + delay
-              val nextAction = actor.eventQueue.nextEvent.get._2
-              val nextUniverse = copy(
-                globalEvents = globalEvents.dropNextEvent(),
-                actors = actors.mapValues(_.addTime(delay))).updatedActor(actor.id)(_.dropNextEvent())
-              (nextTimestamp, nextAction, nextUniverse)
-          })
-
+        Some(delays.minBy(_._1) match {
+          case (delay, _self: UniverseSnapshot) =>
+            val (nextTimestamp, nextAction) = globalEvents.nextEvent.get
+            val nextUniverse = copy(
+              globalEvents = globalEvents.dropNextEvent(),
+              actors = actors.mapValues(_.addTime(delay)))
+            (nextTimestamp, nextAction, nextUniverse)
+          case (delay, actor: ActorLike) =>
+            val nextTimestamp = globalEvents.timestamp + delay
+            val nextAction = actor.eventQueue.nextEvent.get._2
+            val nextUniverse = copy(
+              globalEvents = globalEvents.dropNextEvent(),
+              actors = actors.mapValues(_.addTime(delay))).updatedActor(actor.id)(_.dropNextEvent())
+            (nextTimestamp, nextAction, nextUniverse)
+        })
     }
   }
 
