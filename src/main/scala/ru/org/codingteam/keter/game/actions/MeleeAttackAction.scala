@@ -8,7 +8,7 @@ import ru.org.codingteam.keter.map.{ObjectPosition, UniverseSnapshot}
 
 case class MeleeAttackAction(actor: Actor,
                              target: ObjectPosition,
-                             damage: Double = 10) extends Action {
+                             damage: Int = 10) extends Action {
 
   override def process(state: UniverseSnapshot, engine: IEngine) = {
     if (state.actors.exists(_.position.objectPosition == target)) {
