@@ -1,3 +1,6 @@
 package ru.org.codingteam.keter.game.objects.equipment
 
-case class EquipmentItem(name: String, actions: Seq[Capability])
+abstract class EquipmentItem {
+  def name: String
+  def actions: Set[Capability]
+}

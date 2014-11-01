@@ -12,7 +12,7 @@ case class Actor(id: ActorId,
                  state: ActorState,
                  behavior: IActorBehavior,
                  stats: StatTable,
-                 equipment: Seq[EquipmentItem],
+                 var equipment: Seq[EquipmentItem],
                  position: ActorPosition,
                  bodyparts: Set[Bodypart]) {
 
