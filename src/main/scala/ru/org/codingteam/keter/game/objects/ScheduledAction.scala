@@ -4,8 +4,6 @@ import ru.org.codingteam.keter.map.UniverseSnapshot
 
 import scala.concurrent.Future
 
-trait IActorBehavior {
-
-  def getNextAction(actor: Actor, state: UniverseSnapshot): Future[UniverseSnapshot]
-
+trait ScheduledAction {
+  def perform(universe: UniverseSnapshot): Future[UniverseSnapshot]
 }

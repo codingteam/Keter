@@ -12,7 +12,7 @@ case class WalkAction(actor: Actor,
     val newPosition = actor.position.moveWithJumps(move)
     newPosition.surfaceAt match {
       case Some(s) if s.passable =>
-        state.updatedActor(actor.id)(a => a.copy(position = newPosition))
+        state.updatedActor(actor.id)(_ withPosition newPosition)
       case _ => state
     }
   }

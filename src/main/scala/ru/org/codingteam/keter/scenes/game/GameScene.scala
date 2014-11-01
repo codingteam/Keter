@@ -73,7 +73,7 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
     statsView.drawTextCentered(s"Health: ${player.stats.health} Time passed: ${state.timestamp}", Some(1))
   }
 
-  private def player = state.player
+  private def player = state.player.get
 
   private def state = engine.universe.current
 

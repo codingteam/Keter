@@ -1,6 +1,6 @@
 package ru.org.codingteam.keter.map
 
-import ru.org.codingteam.keter.game.objects.{Actor, GameObject}
+import ru.org.codingteam.keter.game.objects.ActorLike
 
 import scala.annotation.tailrec
 
@@ -17,24 +17,21 @@ object TraverseUtils {
   case class BoardCell(coords: BoardCoords,
                        position: ActorPosition,
                        surface: Option[Surface],
-                       objects: Seq[GameObject],
-                       actors: Seq[Actor],
-                       player: Option[Actor])
+                       actors: Seq[ActorLike],
+                       player: Option[ActorLike])
 
   case class CoordsTuple(boardCoords: BoardCoords, actorPosition: ActorPosition)
 
   def coordsTuplesToBoardCells(state: UniverseSnapshot, cts: Seq[CoordsTuple]): Seq[BoardCell] = {
     val actorsMap = state.createActorsMap
-    val objectsMap = state.objects
     val player = state.player
     cts map {
       case CoordsTuple(bc, ap) => BoardCell(
         coords = bc,
         position = ap,
         surface = ap.surfaceAt,
-        objects = objectsMap.getOrElse(ap.objectPosition, Nil),
         actors = actorsMap.getOrElse(ap.objectPosition, Nil),
-        player = if (ap.objectPosition == player.position.objectPosition) Some(player) else None
+        player = player flatMap (p => if (ap.objectPosition == p.position.objectPosition) Some(p) else None)
       )
     }
   }
@@ -54,38 +51,39 @@ object TraverseUtils {
                           from: ActorPosition,
                           topLimit: Int, bottomLimit: Int, leftLimit: Int, rightLimit: Int): Seq[BoardCell] = {
       val currentUniverse = universe.current
-      val player = currentUniverse.player
-      val inRect = createRectLimitsCheck(topLimit, bottomLimit, leftLimit, rightLimit)
-      def fillStep(cs: Seq[CoordsTuple]): Seq[CoordsTuple] = {
-        def movesFrom(p: BoardCoords): Seq[Move] = {
-          val (dx, dy) = (math.signum(p.x), math.signum(p.y))
-          val xyDir = math.abs(p.x) - math.abs(p.y)
-          if (dx == 0 && dy == 0)
-            for (xx <- -1 to 1; yy <- -1 to 1; if !(xx == 0 && yy == 0)) yield
-              Move(xx, yy)
-          else if (xyDir == 0)
-            Seq(Move(dx, dy), Move(dx, 0), Move(0, dy))
-          else
-            Seq(if (xyDir > 0) Move(dx, 0) else Move(0, dy))
-        }
-        cs flatMap { ct =>
-          movesFrom(ct.boardCoords).flatMap { m =>
-            val newBC = ct.boardCoords.move(m)
-            if (inRect(newBC))
-              Some(CoordsTuple(newBC, ct.actorPosition.moveWithJumps(m)))
+      currentUniverse.player.toSeq flatMap { player =>
+        val inRect = createRectLimitsCheck(topLimit, bottomLimit, leftLimit, rightLimit)
+        def fillStep(cs: Seq[CoordsTuple]): Seq[CoordsTuple] = {
+          def movesFrom(p: BoardCoords): Seq[Move] = {
+            val (dx, dy) = (math.signum(p.x), math.signum(p.y))
+            val xyDir = math.abs(p.x) - math.abs(p.y)
+            if (dx == 0 && dy == 0)
+              for (xx <- -1 to 1; yy <- -1 to 1; if !(xx == 0 && yy == 0)) yield
+                Move(xx, yy)
+            else if (xyDir == 0)
+              Seq(Move(dx, dy), Move(dx, 0), Move(0, dy))
             else
-              None
+              Seq(if (xyDir > 0) Move(dx, 0) else Move(0, dy))
+          }
+          cs flatMap { ct =>
+            movesFrom(ct.boardCoords).flatMap { m =>
+              val newBC = ct.boardCoords.move(m)
+              if (inRect(newBC))
+                Some(CoordsTuple(newBC, ct.actorPosition.moveWithJumps(m)))
+              else
+                None
+            }
           }
         }
+        val initialPos = CoordsTuple(BoardCoords(0, 0), player.position)
+        var acc = Seq(initialPos)
+        var res = Seq[CoordsTuple]()
+        while (acc.nonEmpty) {
+          res ++= acc
+          acc = fillStep(acc)
+        }
+        coordsTuplesToBoardCells(currentUniverse, res)
       }
-      val initialPos = CoordsTuple(BoardCoords(0, 0), player.position)
-      var acc = Seq(initialPos)
-      var res = Seq[CoordsTuple]()
-      while (acc.nonEmpty) {
-        res ++= acc
-        acc = fillStep(acc)
-      }
-      coordsTuplesToBoardCells(currentUniverse, res)
     }
   }
 

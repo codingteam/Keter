@@ -10,16 +10,15 @@ case class MeleeAttackAction(actor: Actor,
                              damage: Int = 10) extends Action {
 
   override def process(state: UniverseSnapshot, engine: IEngine) = {
-    if (state.actors.exists(_.position.objectPosition == target)) {
-      state.copy(actors = state.actors.map { a =>
-        if (a.id != actor.id && a.position.objectPosition == target)
-          a.copy(stats = a.stats.copy(health = a.stats.health - damage))
-        else
-          a
-      })
-    } else {
-      engine.addMessage(s"$actor tries to attack the $target but there is nothing to attack")
-      state
+    val targets = state.findActors(target).values.flatMap {
+      case a: Actor => Some(a)
+      case _ => None
+    }
+    targets.headOption match {
+      case Some(t) => state.updatedActor(t.id) { case a: Actor => a.copy(stats = a.stats.copy(a.stats.health - damage))}
+      case None =>
+        engine.addMessage(s"$actor tries to attack the $target but there is nothing to attack")
+        state
     }
   }
 
