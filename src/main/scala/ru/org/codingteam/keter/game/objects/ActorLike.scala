@@ -12,6 +12,18 @@ trait ActorLike {
   def position: ActorPosition
 
   def eventQueue: EventQueue
+
+  def withPosition(p: ActorPosition): ActorLike
+
+  def withEventQueue(e: EventQueue): ActorLike
+
+  def nextEventDelay: Option[Double] =
+    eventQueue.nextEventDelay map (_ / position.subspaceMatrix.timeCompressionQuotient)
+
+  def addTime(dt: Double): ActorLike = withEventQueue(
+    eventQueue.addTime(dt * position.subspaceMatrix.timeCompressionQuotient))
+
+  def dropNextEvent(): ActorLike = withEventQueue(eventQueue.dropNextEvent())
 }
 
 trait NewGameObject extends ActorLike {
@@ -41,10 +53,10 @@ trait ScheduledAction {
   def perform(universe: UniverseSnapshot): Future[UniverseSnapshot]
 }
 
-sealed class EventQueue(events: SortedMap[Double, Seq[ScheduledAction]]) {
+sealed class EventQueue(val timestamp: Double, events: SortedMap[Double, Seq[ScheduledAction]]) {
 
   def addEvent(at: Double, event: ScheduledAction): EventQueue = {
-    new EventQueue(events + (at -> (events.getOrElse(at, IndexedSeq()) :+ event)))
+    new EventQueue(timestamp, events + (at -> (events.getOrElse(at, IndexedSeq()) :+ event)))
   }
 
   def nextEventTime: Option[Double] = events.headOption map (_._1)
@@ -56,12 +68,16 @@ sealed class EventQueue(events: SortedMap[Double, Seq[ScheduledAction]]) {
   def dropNextEvent(): EventQueue = {
     require(events.nonEmpty)
     events.head match {
-      case (at, Seq(action)) => new EventQueue(events.tail)
-      case (at, actions) => new EventQueue(events.tail + (at -> actions.tail))
+      case (at, Seq(action)) => new EventQueue(timestamp, events.tail)
+      case (at, actions) => new EventQueue(timestamp, events.tail + (at -> actions.tail))
     }
   }
+
+  def addTime(dt: Double): EventQueue = new EventQueue(timestamp + dt, events)
+
+  def nextEventDelay: Option[Double] = nextEventTime map (_ - timestamp)
 }
 
 object EventQueue {
-  val empty = new EventQueue(SortedMap())
+  val empty = new EventQueue(0, SortedMap())
 }
