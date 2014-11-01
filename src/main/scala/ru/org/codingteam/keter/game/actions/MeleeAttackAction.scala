@@ -13,10 +13,10 @@ case class MeleeAttackAction(actor: Actor,
   override def process(state: UniverseSnapshot, engine: IEngine) = {
     if (state.actors.exists(_.position.objectPosition == target)) {
       if (actor.equipment.exists(_.actions.exists(_ == MeleeAttackCapability))) {
-        val newDamage = actor.equipment.find(_.actions.exists(_ == MeleeAttackCapability) == true).get.asInstanceOf[Weapon].damage // assume this item is weapon
+        val newDamage = actor.equipment.find(_.actions.exists(_ == MeleeAttackCapability)).get.asInstanceOf[Weapon].damage // assume this item is weapon
         state.copy(actors = state.actors.map { a =>
           if (a.id != actor.id && a.position.objectPosition == target)
-            a.copy(stats = a.stats.copy(health = math.round(a.stats.health - newDamage).asInstanceOf[Int]))
+            a.copy(stats = a.stats.copy(health = a.stats.health - newDamage))
           else
             a
         })

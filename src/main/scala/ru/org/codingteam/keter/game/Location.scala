@@ -85,7 +85,7 @@ object Location extends Logging {
     lazy val jump33: Jump = Jump(coordsFunc = _ + Move(-16, 0))
 
     val playerId = ActorId()
-    val player = human(
+    var player = human(
       new PlayerBehavior,
       foundation,
       "Dr. Növer",
@@ -96,7 +96,7 @@ object Location extends Logging {
         coords = ActorCoords(2, 3),
         subspaceMatrix = SubspaceMatrix.identity)
     )
-    player.equipment = player.equipment :+ Knife("Knife")
+    player = player.copy(equipment = player.equipment :+ Knife("Knife"))
 
     val scp = human(
       RandomBehavior,
