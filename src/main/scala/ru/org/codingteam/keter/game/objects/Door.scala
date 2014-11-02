@@ -1,9 +1,21 @@
 package ru.org.codingteam.keter.game.objects
 
-case class Door(id: ActorId,
+import ru.org.codingteam.keter.map.ActorPosition
+
+final case class Door(id: ActorId,
                 name: String,
-                tile: String,
-                passable: Boolean,
                 open: Boolean,
                 openTile: String,
-                closedTile :String) extends GameObject
+                closedTile: String,
+                position: ActorPosition,
+                eventQueue: EventQueue = EventQueue.empty) extends ActorLike {
+  def tile = if (open) Some(openTile) else Some(closedTile)
+
+  def passable = open
+
+  override def withEventQueue(e: EventQueue): Door = copy(eventQueue = e)
+
+  override def withPosition(p: ActorPosition): Door = copy(position = p)
+
+  override def withNextEvent = this
+}

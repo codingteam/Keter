@@ -11,22 +11,24 @@ import scala.concurrent.Future
 case class Actor(id: ActorId,
                  faction: Faction,
                  name: String,
-                 tile: String,
+                 tile: Option[String],
                  state: ActorState,
                  behavior: IActorBehavior,
                  stats: StatTable,
                  equipment: Seq[EquipmentItem],
                  position: ActorPosition,
                  bodyparts: Set[Bodypart],
-                 eventQueue: EventQueue) extends ActorLike {
+                 eventQueue: EventQueue = EventQueue.empty) extends ActorLike {
 
   def getNextAction(state: UniverseSnapshot) = behavior.getNextAction(this, state)
 
-  override def withEventQueue(e: EventQueue): ActorLike = copy(eventQueue = e)
+  override def withEventQueue(e: EventQueue): Actor = copy(eventQueue = e)
 
-  override def withPosition(p: ActorPosition): ActorLike = copy(position = p)
+  override def withPosition(p: ActorPosition): Actor = copy(position = p)
 
   lazy val sheduledActionByBehaviour = new ActorSheduledAction(this)
+
+  override def withNextEvent = addEventAfter(100, sheduledActionByBehaviour)
 }
 
 object Actor {

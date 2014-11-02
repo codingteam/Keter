@@ -108,17 +108,14 @@ object Location extends Logging {
     val door = Door(
       ActorId(),
       "door",
-      "▯",
-      false,
-      false,
+      open = false,
       "|",
-      "▯"
+      "▯",
+      position = ActorPosition(submap1, ActorCoords(5, 3))
     )
     UniverseSnapshot(
-      actors = Seq(player, scp),
-      playerId = playerId,
-      timestamp = 0L,
-      objects = Map(ObjectPosition(submap1, ObjectCoords(5, 3)) -> List(door)),
+      actors = Seq(player, scp, door).map(a => (a.id, a)).toMap,
+      playerId = Some(playerId),
       globalEvents = EventQueue.empty)
   }
 
@@ -138,13 +135,13 @@ object Location extends Logging {
     Actor(id,
       faction,
       name,
-      tile,
+      tile = Some(tile),
       ActorActive,
       behavior,
       StatTable(health = 100),
       Seq[EquipmentItem](),
       position: ActorPosition,
       bodyparts: Set[Bodypart]
-    )
+    ).withNextEvent
   }
 }

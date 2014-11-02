@@ -7,7 +7,7 @@ import scala.annotation.tailrec
 
 package object map {
 
-  case class ActorPosition(submap: Submap, coords: ActorCoords, subspaceMatrix: SubspaceMatrix) {
+  case class ActorPosition(submap: Submap, coords: ActorCoords, subspaceMatrix: SubspaceMatrix = SubspaceMatrix.identity) {
     private def move(m: Move): ActorPosition = copy(coords = coords + subspaceMatrix.convertMove(m))
 
     private def jump(jump: Jump): ActorPosition = copy(
@@ -100,7 +100,7 @@ package object map {
   case class UniverseSnapshot(actors: Map[ActorId, ActorLike],
                               playerId: Option[ActorId],
                               globalEvents: EventQueue) extends Logging {
-    lazy val player = playerId flatMap findActor
+    lazy val player = playerId flatMap findActor flatMap util.castToOption[Actor]
 
     def updatedActor(id: ActorId)(f: ActorLike => ActorLike): UniverseSnapshot = {
       actors get id match {

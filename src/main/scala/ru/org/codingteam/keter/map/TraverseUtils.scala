@@ -51,39 +51,37 @@ object TraverseUtils {
                           from: ActorPosition,
                           topLimit: Int, bottomLimit: Int, leftLimit: Int, rightLimit: Int): Seq[BoardCell] = {
       val currentUniverse = universe.current
-      currentUniverse.player.toSeq flatMap { player =>
-        val inRect = createRectLimitsCheck(topLimit, bottomLimit, leftLimit, rightLimit)
-        def fillStep(cs: Seq[CoordsTuple]): Seq[CoordsTuple] = {
-          def movesFrom(p: BoardCoords): Seq[Move] = {
-            val (dx, dy) = (math.signum(p.x), math.signum(p.y))
-            val xyDir = math.abs(p.x) - math.abs(p.y)
-            if (dx == 0 && dy == 0)
-              for (xx <- -1 to 1; yy <- -1 to 1; if !(xx == 0 && yy == 0)) yield
-                Move(xx, yy)
-            else if (xyDir == 0)
-              Seq(Move(dx, dy), Move(dx, 0), Move(0, dy))
+      val inRect = createRectLimitsCheck(topLimit, bottomLimit, leftLimit, rightLimit)
+      def fillStep(cs: Seq[CoordsTuple]): Seq[CoordsTuple] = {
+        def movesFrom(p: BoardCoords): Seq[Move] = {
+          val (dx, dy) = (math.signum(p.x), math.signum(p.y))
+          val xyDir = math.abs(p.x) - math.abs(p.y)
+          if (dx == 0 && dy == 0)
+            for (xx <- -1 to 1; yy <- -1 to 1; if !(xx == 0 && yy == 0)) yield
+              Move(xx, yy)
+          else if (xyDir == 0)
+            Seq(Move(dx, dy), Move(dx, 0), Move(0, dy))
+          else
+            Seq(if (xyDir > 0) Move(dx, 0) else Move(0, dy))
+        }
+        cs flatMap { ct =>
+          movesFrom(ct.boardCoords).flatMap { m =>
+            val newBC = ct.boardCoords.move(m)
+            if (inRect(newBC))
+              Some(CoordsTuple(newBC, ct.actorPosition.moveWithJumps(m)))
             else
-              Seq(if (xyDir > 0) Move(dx, 0) else Move(0, dy))
-          }
-          cs flatMap { ct =>
-            movesFrom(ct.boardCoords).flatMap { m =>
-              val newBC = ct.boardCoords.move(m)
-              if (inRect(newBC))
-                Some(CoordsTuple(newBC, ct.actorPosition.moveWithJumps(m)))
-              else
-                None
-            }
+              None
           }
         }
-        val initialPos = CoordsTuple(BoardCoords(0, 0), player.position)
-        var acc = Seq(initialPos)
-        var res = Seq[CoordsTuple]()
-        while (acc.nonEmpty) {
-          res ++= acc
-          acc = fillStep(acc)
-        }
-        coordsTuplesToBoardCells(currentUniverse, res)
       }
+      val initialPos = CoordsTuple(BoardCoords(0, 0), from)
+      var acc = Seq(initialPos)
+      var res = Seq[CoordsTuple]()
+      while (acc.nonEmpty) {
+        res ++= acc
+        acc = fillStep(acc)
+      }
+      coordsTuplesToBoardCells(currentUniverse, res)
     }
   }
 
