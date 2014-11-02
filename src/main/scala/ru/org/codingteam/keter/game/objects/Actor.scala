@@ -20,7 +20,7 @@ case class Actor(id: ActorId,
                  position: ActorPosition,
                  bodyparts: Set[Bodypart],
                  eventQueue: EventQueue = EventQueue.empty) extends ActorLike {
-
+  override type SelfType = Actor
   def decreaseHealth(amount: Int): Actor = if (stats.health <= amount)
     copy(stats = stats.copy(health = 0), state = ActorInactive)
   else
@@ -34,7 +34,7 @@ case class Actor(id: ActorId,
 
   lazy val sheduledActionByBehaviour = new ActorSheduledAction(this)
 
-  def withSheduledNextEventAfter(dt: Double) = addEventAfter(dt, sheduledActionByBehaviour)
+  def withSheduledNextEventAfter(dt: Double): Actor = addEventAfter(dt, sheduledActionByBehaviour)
 
 }
 

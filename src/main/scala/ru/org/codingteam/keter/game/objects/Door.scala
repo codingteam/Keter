@@ -9,6 +9,8 @@ final case class Door(id: ActorId,
                       closedTile: String,
                       position: ActorPosition,
                       eventQueue: EventQueue = EventQueue.empty) extends ActorLike {
+  override type SelfType = Door
+
   def tile = if (open) Some(openTile) else Some(closedTile)
 
   def passable = open
