@@ -17,7 +17,7 @@ case class WalkAction(actor: Actor,
     }
   }
 
-  override def duration(state: UniverseSnapshot) = (100 * move.length).toLong
+  override def duration(state: UniverseSnapshot) = (100 * move.length)
 
   override def capabilities = Map(
     WalkCapability -> 1

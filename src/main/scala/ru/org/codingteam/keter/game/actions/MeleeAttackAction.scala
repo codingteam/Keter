@@ -22,7 +22,7 @@ case class MeleeAttackAction(actor: Actor,
     }
   }
 
-  override def duration(state: UniverseSnapshot): Long = 80L
+  override def duration(state: UniverseSnapshot) = 80
 
   override def capabilities = Map(
     MeleeAttackCapability -> 1

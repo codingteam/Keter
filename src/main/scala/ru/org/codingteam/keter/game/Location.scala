@@ -142,6 +142,6 @@ object Location extends Logging {
       Seq[EquipmentItem](),
       position: ActorPosition,
       bodyparts: Set[Bodypart]
-    ).withNextEvent
+    ).withSheduledNextEventAfter(100)
   }
 }

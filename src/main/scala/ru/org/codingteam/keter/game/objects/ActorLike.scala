@@ -17,8 +17,6 @@ trait ActorLike {
 
   def withEventQueue(e: EventQueue): self.type
 
-  def withNextEvent: self.type
-
   def nextEventDelay: Option[Double] =
     eventQueue.nextEventDelay map (_ / position.subspaceMatrix.timeCompressionQuotient)
 

@@ -9,7 +9,7 @@ trait Action {
 
   def actor: Actor
 
-  def duration(state: UniverseSnapshot): Long
+  def duration(state: UniverseSnapshot): Double
 
   def process(state: UniverseSnapshot, engine: IEngine): UniverseSnapshot
 

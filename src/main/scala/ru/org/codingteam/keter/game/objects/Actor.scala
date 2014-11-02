@@ -1,6 +1,7 @@
 package ru.org.codingteam.keter.game.objects
 
 import ru.org.codingteam.keter.game.Faction
+import ru.org.codingteam.keter.game.actions.{Action, MeleeAttackAction, WaitAction, WalkAction}
 import ru.org.codingteam.keter.game.objects.Actor.ActorSheduledAction
 import ru.org.codingteam.keter.game.objects.equipment.EquipmentItem
 import ru.org.codingteam.keter.game.objects.equipment.bodyparts.Bodypart
@@ -20,6 +21,11 @@ case class Actor(id: ActorId,
                  bodyparts: Set[Bodypart],
                  eventQueue: EventQueue = EventQueue.empty) extends ActorLike {
 
+  def decreaseHealth(amount: Int): Actor = if (stats.health <= amount)
+    copy(stats = stats.copy(health = 0), state = ActorInactive)
+  else
+    copy(stats = stats.copy(health = stats.health - amount))
+
   def getNextAction(state: UniverseSnapshot) = behavior.getNextAction(this, state)
 
   override def withEventQueue(e: EventQueue): Actor = copy(eventQueue = e)
@@ -28,7 +34,8 @@ case class Actor(id: ActorId,
 
   lazy val sheduledActionByBehaviour = new ActorSheduledAction(this)
 
-  override def withNextEvent = addEventAfter(100, sheduledActionByBehaviour)
+  def withSheduledNextEventAfter(dt: Double) = addEventAfter(dt, sheduledActionByBehaviour)
+
 }
 
 object Actor {
@@ -38,4 +45,33 @@ object Actor {
       actor.behavior.getNextAction(actor, universe)
   }
 
+  def processAction(action: Action, universe: UniverseSnapshot): UniverseSnapshot = action match {
+    case WaitAction(actor, duration) =>
+      universe.updatedActor(actor.id)(_.asInstanceOf[Actor].withSheduledNextEventAfter(duration))
+    case WalkAction(actor, move) =>
+      if (move.length == 0)
+        processAction(WaitAction(actor, 150), universe)
+      else {
+        val duration = move.length * 250
+        val newPosition = actor.position.moveWithJumps(move)
+        newPosition.surfaceAt match {
+          case Some(s) if s.passable =>
+            universe.updatedActor(actor.id)(_.withPosition(newPosition).asInstanceOf[Actor].withSheduledNextEventAfter(duration))
+          case _ =>
+            processAction(WaitAction(actor, 150), universe)
+        }
+      }
+    case MeleeAttackAction(actor, target, damage) =>
+      val actorsAt = universe.findActors(target)
+      if (actorsAt.isEmpty)
+        processAction(WaitAction(actor, 150), universe)
+      else {
+        actorsAt.foldLeft(universe)((u, ai) => ai match {
+          case (actorId, _actor: Actor) => u.updatedActor(actorId) {
+            case actor: Actor => actor.decreaseHealth(damage).withSheduledNextEventAfter(80)
+          }
+          case _ => u
+        })
+      }
+  }
 }
