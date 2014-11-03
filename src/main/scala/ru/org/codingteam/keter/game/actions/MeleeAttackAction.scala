@@ -15,7 +15,10 @@ case class MeleeAttackAction(actor: Actor,
       case _ => None
     }
     targets.headOption match {
-      case Some(t) => state.updatedActor(t.id) { case a: Actor => a.copy(stats = a.stats.copy(a.stats.health - damage))}
+      case Some(t) => state.updatedActor(t.id) {
+        case a: Actor => a.copy(stats = a.stats.copy(a.stats.health - damage))
+        case a => a
+      }
       case None =>
         engine.addMessage(s"$actor tries to attack the $target but there is nothing to attack")
         state

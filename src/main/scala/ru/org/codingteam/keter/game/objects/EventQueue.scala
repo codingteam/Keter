@@ -16,7 +16,7 @@ sealed class EventQueue(val timestamp: Double, events: SortedMap[Double, Seq[Sch
   }
 
   def dropNextEvent(): EventQueue = {
-    require(events.nonEmpty)
+    require(events.nonEmpty, "Event queue is empty!")
     events.head match {
       case (at, Seq(action)) => new EventQueue(timestamp, events.tail)
       case (at, actions) => new EventQueue(timestamp, events.tail + (at -> actions.tail))

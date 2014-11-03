@@ -5,13 +5,14 @@ import ru.org.codingteam.keter.util.Logging
 
 class Engine(val universe: Universe) extends IEngine with Logging {
 
-  implicit val executionContext = scala.scalajs.concurrent.JSExecutionContext.runNow
+  implicit val executionContext = scala.scalajs.concurrent.JSExecutionContext.queue
 
   def start(): Unit = {
     engineLoop()
   }
 
   private def engineLoop(): Unit = {
+    log.debug("Retrieving next event from queues...")
     val state = universe.current
     state.nextEvent match {
       case Some((at, action, nextState)) =>
@@ -23,6 +24,7 @@ class Engine(val universe: Universe) extends IEngine with Logging {
           engineLoop()
         }
       case None =>
+        log.debug("Error!!")
         log.error(s"Universe death (no events), last timestamp=${state.globalEvents.timestamp}")
     }
   }

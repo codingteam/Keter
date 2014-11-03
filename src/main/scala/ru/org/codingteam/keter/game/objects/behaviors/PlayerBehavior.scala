@@ -9,7 +9,7 @@ import scala.concurrent.Future
 
 class PlayerBehavior extends IActorBehavior {
 
-  implicit val executionContext = scala.scalajs.concurrent.JSExecutionContext.runNow
+  implicit val executionContext = scala.scalajs.concurrent.JSExecutionContext.queue
 
   override def getNextAction(actor: Actor, gameState: UniverseSnapshot): Future[UniverseSnapshot] = Application.currentScene match {
     case Some(scene: GameScene) =>

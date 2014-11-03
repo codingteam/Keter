@@ -3,7 +3,7 @@ package ru.org.codingteam.keter.scenes.game
 import org.scalajs.dom.KeyboardEvent
 import ru.org.codingteam.keter.game.Engine
 import ru.org.codingteam.keter.game.actions._
-import ru.org.codingteam.keter.game.objects.{Actor, ActorActive, ActorInactive, GameObject}
+import ru.org.codingteam.keter.game.objects._
 import ru.org.codingteam.keter.map.TraverseUtils.{BoardCell, BoardCoords}
 import ru.org.codingteam.keter.map.{Move, Surface, TraverseUtils, UniverseSnapshot}
 import ru.org.codingteam.keter.scenes.Scene
@@ -62,29 +62,34 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
   }
 
   override protected def render(): Unit = {
-    display.clear()
+    log.debug("Render called")
     for (RenderState(universeState, _) <- renderState; player <- universeState.player) {
-      log.debug("Drawing field")
+      //      log.debug("Drawing field")
       val fieldContainer = display.viewport(1, 1, display.width - 2, display.height - 5)
       val (offsetX, offsetY) = (fieldContainer.width / 2 - 1, fieldContainer.height / 2 - 1)
       val (fieldWidth, fieldHeight) = (offsetX * 2 + 1, offsetY * 2 + 1)
       val fieldView = fieldContainer.viewportCentered(fieldWidth, fieldHeight, shiftX = offsetX, shiftY = offsetY)
       val cells = TraverseUtils.DirectionLookTraverseMethod.traverse(engine.universe, player.position, -offsetY, offsetY, -offsetX, offsetX)
+      //      log.debug(s"Cell count: ${cells.size}")
+      display.clear()
       cells foreach {
-        case BoardCell(BoardCoords(x, y), _pos, surface, actors, playerOpt) =>
+        case bc@BoardCell(BoardCoords(x, y), _pos, surface, actors, playerOpt) =>
+          //          log.debug(s"cell=$bc")
           val obj = playerOpt orElse actors.headOption orElse surface
+          //          log.debug(s"obj=$obj")
           obj foreach {
-            case a: Actor => fieldView.draw(x, y, a.tile.orNull, getColor(a))
-            case o: GameObject => fieldView.draw(x, y, o.tile)
+            case a: ActorLike => fieldView.draw(x, y, a.tile.orNull, getColor(a))
             case s: Surface => fieldView.draw(x, y, s.tile)
           }
       }
       // display stats.
+      //      log.debug("Drawing stats")
       val statsView = display.viewport(0, display.height - 3, display.width, 3)
       statsView.drawTextCentered(s"Faction/Name: ${player.faction.name}/${player.name}", Some(0))
       statsView.drawTextCentered(s"Health: ${player.stats.health}", Some(1))
       statsView.drawTextCentered(s"Time global/local: ${universeState.globalEvents.timestamp}/${player.eventQueue.timestamp}", Some(2))
     }
+    //    log.debug("Render finished")
   }
 
   private def processAction(action: Action): Unit = renderState match {
@@ -108,14 +113,16 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
   }
 
 
-  private def getColor(actor: Actor) = {
-    actor.state match {
+  private def getColor(actor: ActorLike) = actor match {
+    case a: Actor => a.state match {
       case ActorActive => null
       case ActorInactive => "#aaa"
     }
+    case _ => null
   }
 
   def nextPlayerAction(universe: UniverseSnapshot): Future[Action] = {
+    log.debug("The next player`s action requested")
     if (renderState.isDefined) {
       renderState.get.promise.failure(new RuntimeException("Next player`s action is requested, but previous one has not filled yet!"))
       renderState = None
@@ -123,7 +130,6 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
     }
     val p = Promise[Action]()
     renderState = Some(RenderState(universe, p))
-    render()
     p.future
   }
 
