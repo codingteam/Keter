@@ -79,8 +79,8 @@ object Location extends Logging {
     lazy val jump21: Jump = Jump(_ => submap1, c => ActorCoords(23, 6, c.t), _ * SubspaceMatrix(-1, 0, 0, 0, 1, 0, 0, 0, 1))
     lazy val jump12: Jump = Jump(_ => submap3, c => ActorCoords(4, 1, c.t))
     lazy val jump31: Jump = Jump(_ => submap1, c => ActorCoords(7, 9, c.t))
-    lazy val jump32: Jump = Jump(coordsFunc = _ + Move(16, 0))
-    lazy val jump33: Jump = Jump(coordsFunc = _ + Move(-16, 0))
+    lazy val jump32: Jump = Jump(coordsFunc = _ + Move(16, 0), matrixFunc = _ * SubspaceMatrix(1, 0, 0, 0, 1, 0, 0, 0, 2))
+    lazy val jump33: Jump = Jump(coordsFunc = _ + Move(-16, 0), matrixFunc = _ * SubspaceMatrix(1, 0, 0, 0, 1, 0, 0, 0, 0.5))
 
     val playerId = ActorId()
     val player = human(
