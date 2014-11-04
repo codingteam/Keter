@@ -4,6 +4,7 @@ import ru.org.codingteam.keter.game.objects._
 import ru.org.codingteam.keter.game.objects.behaviors.{PlayerBehavior, RandomBehavior}
 import ru.org.codingteam.keter.game.objects.equipment.EquipmentItem
 import ru.org.codingteam.keter.game.objects.equipment.bodyparts._
+import ru.org.codingteam.keter.game.objects.equipment.items.Knife
 import ru.org.codingteam.keter.map._
 import ru.org.codingteam.keter.util.Logging
 
@@ -83,7 +84,7 @@ object Location extends Logging {
     lazy val jump33: Jump = Jump(coordsFunc = _ + Move(-16, 0), matrixFunc = _ * SubspaceMatrix(1, 0, 0, 0, 1, 0, 0, 0, 0.5))
 
     val playerId = ActorId()
-    val player = human(
+    var player = human(
       new PlayerBehavior,
       foundation,
       "Dr. Növer",
@@ -94,6 +95,8 @@ object Location extends Logging {
         coords = ActorCoords(2, 3),
         subspaceMatrix = SubspaceMatrix.identity)
     )
+    player = player.copy(equipment = player.equipment :+ Knife("Knife"))
+
     val scp = human(
       RandomBehavior,
       monsters,
@@ -113,6 +116,7 @@ object Location extends Logging {
       "▯",
       position = ActorPosition(submap1, ActorCoords(5, 3))
     )
+
     UniverseSnapshot(
       actors = Seq(player, scp, door).map(a => (a.id, a)).toMap,
       playerId = Some(playerId),
