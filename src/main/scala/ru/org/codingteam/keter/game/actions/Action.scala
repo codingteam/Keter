@@ -1,17 +1,11 @@
 package ru.org.codingteam.keter.game.actions
 
-import ru.org.codingteam.keter.game.IEngine
-import ru.org.codingteam.keter.game.objects.Actor
 import ru.org.codingteam.keter.game.objects.equipment.Capability
-import ru.org.codingteam.keter.map.UniverseSnapshot
+import ru.org.codingteam.keter.game.objects.{Actor, ActorId}
 
 trait Action {
 
-  def actor: Actor
-
-  def duration(state: UniverseSnapshot): Long
-
-  def process(state: UniverseSnapshot, engine: IEngine): UniverseSnapshot
+  def actorId: ActorId
 
   def capabilities = Map[Capability, Int]()
 

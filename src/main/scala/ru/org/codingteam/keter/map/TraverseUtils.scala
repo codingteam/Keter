@@ -1,6 +1,6 @@
 package ru.org.codingteam.keter.map
 
-import ru.org.codingteam.keter.game.objects.{Actor, GameObject}
+import ru.org.codingteam.keter.game.objects.ActorLike
 
 import scala.annotation.tailrec
 
@@ -17,24 +17,21 @@ object TraverseUtils {
   case class BoardCell(coords: BoardCoords,
                        position: ActorPosition,
                        surface: Option[Surface],
-                       objects: Seq[GameObject],
-                       actors: Seq[Actor],
-                       player: Option[Actor])
+                       actors: Seq[ActorLike],
+                       player: Option[ActorLike])
 
   case class CoordsTuple(boardCoords: BoardCoords, actorPosition: ActorPosition)
 
   def coordsTuplesToBoardCells(state: UniverseSnapshot, cts: Seq[CoordsTuple]): Seq[BoardCell] = {
     val actorsMap = state.createActorsMap
-    val objectsMap = state.objects
     val player = state.player
     cts map {
       case CoordsTuple(bc, ap) => BoardCell(
         coords = bc,
         position = ap,
         surface = ap.surfaceAt,
-        objects = objectsMap.getOrElse(ap.objectPosition, Nil),
         actors = actorsMap.getOrElse(ap.objectPosition, Nil),
-        player = if (ap.objectPosition == player.position.objectPosition) Some(player) else None
+        player = player flatMap (p => if (ap.objectPosition == p.position.objectPosition) Some(p) else None)
       )
     }
   }
@@ -54,7 +51,6 @@ object TraverseUtils {
                           from: ActorPosition,
                           topLimit: Int, bottomLimit: Int, leftLimit: Int, rightLimit: Int): Seq[BoardCell] = {
       val currentUniverse = universe.current
-      val player = currentUniverse.player
       val inRect = createRectLimitsCheck(topLimit, bottomLimit, leftLimit, rightLimit)
       def fillStep(cs: Seq[CoordsTuple]): Seq[CoordsTuple] = {
         def movesFrom(p: BoardCoords): Seq[Move] = {
@@ -78,7 +74,7 @@ object TraverseUtils {
           }
         }
       }
-      val initialPos = CoordsTuple(BoardCoords(0, 0), player.position)
+      val initialPos = CoordsTuple(BoardCoords(0, 0), from)
       var acc = Seq(initialPos)
       var res = Seq[CoordsTuple]()
       while (acc.nonEmpty) {
@@ -95,7 +91,7 @@ object TraverseUtils {
                           from: ActorPosition,
                           topLimit: Int, bottomLimit: Int, leftLimit: Int, rightLimit: Int): Seq[BoardCell] = {
       val dirMap = Array.ofDim[ActorPosition](bottomLimit - topLimit + 1, rightLimit - leftLimit + 1,
-        Seq(topLimit, bottomLimit, leftLimit, rightLimit).max + 1)
+        Seq(topLimit, bottomLimit, leftLimit, rightLimit).map(_.abs).max + 1)
       def getDirectionCache(bc: BoardCoords): Array[ActorPosition] = {
         val newBc = {
           @tailrec def nod(a: Int, b: Int): Int = a % b match {
@@ -138,6 +134,64 @@ object TraverseUtils {
 
       val cts = for (y <- topLimit to bottomLimit; x <- leftLimit to rightLimit; bc = BoardCoords(x, y)) yield
         CoordsTuple(bc, computeAP(bc))
+
+      coordsTuplesToBoardCells(universe.current, cts)
+    }
+  }
+
+  object DirectionLimitedLookTraverseMethod extends TraverseMethod {
+
+    override def traverse(universe: Universe,
+                          from: ActorPosition,
+                          topLimit: Int, bottomLimit: Int, leftLimit: Int, rightLimit: Int): Seq[BoardCell] = {
+      val dirMap = Array.ofDim[Option[ActorPosition]](bottomLimit - topLimit + 1, rightLimit - leftLimit + 1,
+        Seq(topLimit, bottomLimit, leftLimit, rightLimit).map(_.abs).max + 1)
+      def getDirectionCache(bc: BoardCoords): Array[Option[ActorPosition]] = {
+        val newBc = {
+          @tailrec def nod(a: Int, b: Int): Int = a % b match {
+            case 0 => b
+            case q => nod(b, q)
+          }
+          @inline def nodChecked(a: Int, b: Int) = if (a > b) nod(b, a) else nod(a, b)
+          bc match {
+            case BoardCoords(x, y) if !(x == 0 && y == 0) =>
+              val q = nodChecked(math abs x, math abs y)
+              BoardCoords(x / q, y / q)
+            case _ => bc
+          }
+        }
+        dirMap(newBc.y - topLimit)(newBc.x - leftLimit)
+      }
+      @inline def getCacheIndex(bc: BoardCoords) = math.max(math abs bc.x, math abs bc.y)
+      def computeAP(bc: BoardCoords): Option[ActorPosition] = {
+        val zMax = getCacheIndex(bc)
+        val dir = getDirectionCache(bc)
+        @inline def prevBC(z: Int) = BoardCoords((z.toDouble / zMax * bc.x).round.toInt, (z.toDouble / zMax * bc.y).round.toInt)
+        def compute(z: Int, bc: BoardCoords): Option[ActorPosition] = {
+          if (z == 0)
+            Some(from)
+          else
+            dir(z) match {
+              case null =>
+                val pbc = prevBC(z - 1)
+                val pap = compute(z - 1, pbc)
+                val move = pbc to bc
+                val ap = pap match {
+                  case Some(p) if p.surfaceAt.isDefined && p.surfaceAt.get.passable =>
+                    Some(p moveWithJumps move)
+                  case _ => None
+                }
+                dir(z) = ap
+                ap
+              case ap =>
+                ap
+            }
+        }
+        compute(zMax, bc)
+      }
+
+      val cts = for (y <- topLimit to bottomLimit; x <- leftLimit to rightLimit; bc = BoardCoords(x, y); ap <- computeAP(bc)) yield
+        CoordsTuple(bc, ap)
 
       coordsTuplesToBoardCells(universe.current, cts)
     }

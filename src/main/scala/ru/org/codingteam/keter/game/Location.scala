@@ -2,10 +2,9 @@ package ru.org.codingteam.keter.game
 
 import ru.org.codingteam.keter.game.objects._
 import ru.org.codingteam.keter.game.objects.behaviors.{PlayerBehavior, RandomBehavior}
+import ru.org.codingteam.keter.game.objects.equipment.EquipmentItem
 import ru.org.codingteam.keter.game.objects.equipment.bodyparts._
-import ru.org.codingteam.keter.game.objects.equipment.items._
 import ru.org.codingteam.keter.game.objects.equipment.items.Knife
-import ru.org.codingteam.keter.game.objects.equipment.{EquipmentItem}
 import ru.org.codingteam.keter.map._
 import ru.org.codingteam.keter.util.Logging
 
@@ -81,8 +80,8 @@ object Location extends Logging {
     lazy val jump21: Jump = Jump(_ => submap1, c => ActorCoords(23, 6, c.t), _ * SubspaceMatrix(-1, 0, 0, 0, 1, 0, 0, 0, 1))
     lazy val jump12: Jump = Jump(_ => submap3, c => ActorCoords(4, 1, c.t))
     lazy val jump31: Jump = Jump(_ => submap1, c => ActorCoords(7, 9, c.t))
-    lazy val jump32: Jump = Jump(coordsFunc = _ + Move(16, 0))
-    lazy val jump33: Jump = Jump(coordsFunc = _ + Move(-16, 0))
+    lazy val jump32: Jump = Jump(coordsFunc = _ + Move(16, 0), matrixFunc = _ * SubspaceMatrix(1, 0, 0, 0, 1, 0, 0, 0, 2))
+    lazy val jump33: Jump = Jump(coordsFunc = _ + Move(-16, 0), matrixFunc = _ * SubspaceMatrix(1, 0, 0, 0, 1, 0, 0, 0, 0.5))
 
     val playerId = ActorId()
     var player = human(
@@ -112,18 +111,16 @@ object Location extends Logging {
     val door = Door(
       ActorId(),
       "door",
-      "▯",
-      false,
-      false,
+      open = false,
       "|",
-      "▯"
+      "▯",
+      position = ActorPosition(submap1, ActorCoords(5, 3))
     )
 
     UniverseSnapshot(
-      actors = Seq(player, scp),
-      playerId = playerId,
-      timestamp = 0L,
-      objects = Map(ObjectPosition(submap1, ObjectCoords(5, 3)) -> List(door)))
+      actors = Seq(player, scp, door).map(a => (a.id, a)).toMap,
+      playerId = Some(playerId),
+      globalEvents = EventQueue.empty)
   }
 
   def human(behavior: IActorBehavior,
@@ -138,19 +135,17 @@ object Location extends Logging {
               Arm("left arm", 50.0),
               Arm("right arm", 50.0),
               Head("head", 75.0),
-              Torso("torso", 100.0)
-              )
-            ): Actor = {
-      Actor(id,
-           faction,
-           name,
-           tile,
-           ActorActive,
-           behavior,
-           StatTable(health = 100),
-           Seq[EquipmentItem](),
-           position: ActorPosition,
-           bodyparts: Set[Bodypart]
-     )
+              Torso("torso", 100.0))): Actor = {
+    Actor(id,
+      faction,
+      name,
+      tile = Some(tile),
+      ActorActive,
+      behavior,
+      StatTable(health = 100),
+      Seq[EquipmentItem](),
+      position: ActorPosition,
+      bodyparts: Set[Bodypart]
+    ).withSheduledNextEventAfter(100)
   }
 }

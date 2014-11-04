@@ -1,12 +1,14 @@
 package ru.org.codingteam.keter
 
-import ru.org.codingteam.keter.game.objects.{Actor, ActorId, GameObject}
+import ru.org.codingteam.keter.game.objects._
+import ru.org.codingteam.keter.util.Logging
 
 import scala.annotation.tailrec
+import scala.reflect.ClassTag
 
 package object map {
 
-  case class ActorPosition(submap: Submap, coords: ActorCoords, subspaceMatrix: SubspaceMatrix) {
+  case class ActorPosition(submap: Submap, coords: ActorCoords, subspaceMatrix: SubspaceMatrix = SubspaceMatrix.identity) {
     private def move(m: Move): ActorPosition = copy(coords = coords + subspaceMatrix.convertMove(m))
 
     private def jump(jump: Jump): ActorPosition = copy(
@@ -88,46 +90,76 @@ package object map {
       this.m20 * m.m00 + this.m21 * m.m10 + this.m22 * m.m20,
       this.m20 * m.m01 + this.m21 * m.m11 + this.m22 * m.m21,
       this.m20 * m.m02 + this.m21 * m.m12 + this.m22 * m.m22)
+
+    def timeCompressionQuotient = m22
   }
 
   object SubspaceMatrix {
     lazy val identity = SubspaceMatrix(1, 0, 0, 0, 1, 0, 0, 0, 1)
   }
 
-  case class UniverseSnapshot(timestamp: Long,
-                              actors: Seq[Actor],
-                              playerId: ActorId,
-                              objects: Map[ObjectPosition, List[GameObject]]) {
-    lazy val player = findActor(playerId).getOrElse {
-      throw new IllegalStateException("actor with playerId must exist")
+  case class UniverseSnapshot(actors: Map[ActorId, ActorLike],
+                              playerId: Option[ActorId],
+                              globalEvents: EventQueue) extends Logging {
+    lazy val player = playerId flatMap findActorOfType[Actor]
+
+    def updatedActorOfType[T <: ActorLike : ClassTag](id: ActorId)(f: T => T): UniverseSnapshot = {
+      findActor(id) match {
+        case Some(a: T) =>
+          val newActor = f(a)
+          if (newActor.id == id)
+            copy(actors = actors + (newActor.id -> newActor))
+          else
+            copy(actors = actors - id + (newActor.id -> newActor))
+        case _ => this
+      }
     }
 
-    def updatedObjects(pos: ObjectPosition)(f: List[GameObject] => List[GameObject]): UniverseSnapshot = {
-      copy(objects = objects.updated(pos, f(objects.getOrElse(pos, Nil))))
-    }
+    def updatedActor(id: ActorId)(f: ActorLike => ActorLike): UniverseSnapshot = updatedActorOfType[ActorLike](id)(f)
 
-    def updatedActor(id: ActorId)(f: Actor => Actor): UniverseSnapshot = {
-      copy(actors = actors map (a => if (a.id == id) f(a) else a))
-    }
+    def findActor(id: ActorId): Option[ActorLike] = actors get id
 
-    def updatedTimestamp(f: Long => Long): UniverseSnapshot = {
-      val newTime = f(timestamp)
-      copy(timestamp = newTime, actors = actors map (a => a.copy(position = a.position.withUpdatedTime(_ => newTime.toInt))))
-    }
+    def findActorOfType[T <: ActorLike : ClassTag](id: ActorId): Option[T] = findActor(id) flatMap util.castToOption[T]
 
-    def findActor(id: ActorId): Option[Actor] = actors find (_.id == id)
+    def findActors(position: ObjectPosition) = actors filter (_._2.position.objectPosition == position) map (_._2)
 
-    def findActors(position: ObjectPosition) = actors filter (_.position.objectPosition == position)
+    def findActorsOfType[T <: ActorLike : ClassTag](position: ObjectPosition) = findActors(position).flatMap(util.castToOption[T](_))
 
-    def createActorsMap: Map[ObjectPosition, List[Actor]] = {
-      var map = Map[ObjectPosition, List[Actor]]()
+    def createActorsMap: Map[ObjectPosition, List[ActorLike]] = {
+      var map = Map[ObjectPosition, List[ActorLike]]()
       actors foreach {
-        a =>
+        case (_id, a) =>
           val pos = a.position.objectPosition
           val objects = map.getOrElse(pos, Nil)
           map = map.updated(pos, objects :+ a)
       }
       map
+    }
+
+    def nextEvent: Option[(Double, ScheduledAction, UniverseSnapshot)] = {
+      val delays = (globalEvents.nextEventDelay map ((_, this))).toIndexedSeq ++
+        actors.values.flatMap(a => a.nextEventDelay.map((_, a)))
+      log.debug(s"Timestamp: ${globalEvents.timestamp}; First event count: ${delays.size}")
+      if (delays.isEmpty)
+        None
+      else
+        Some(delays.minBy(_._1) match {
+          case (delay, _self: UniverseSnapshot) =>
+            val (nextTimestamp, nextAction) = globalEvents.nextEvent.get
+            val nextUniverse = copy(
+              globalEvents = globalEvents.dropNextEvent().addTime(delay),
+              actors = actors.mapValues(_.addTime(delay)))
+            log.debug(s"Event from universe, delay=$delay, next timestamp=$nextTimestamp")
+            (nextTimestamp, nextAction, nextUniverse)
+          case (delay, actor: ActorLike) =>
+            val nextTimestamp = globalEvents.timestamp + delay
+            val nextAction = actor.eventQueue.nextEvent.get._2
+            val nextUniverse = copy(
+              globalEvents = globalEvents.addTime(delay),
+              actors = actors.mapValues(_.addTime(delay))).updatedActor(actor.id)(_.dropNextEvent())
+            log.debug(s"Event from actor, delay=$delay, next timestamp=$nextTimestamp")
+            (nextTimestamp, nextAction, nextUniverse)
+        })
     }
   }
 
