@@ -29,8 +29,6 @@ case class Actor(id: ActorId,
   else
     copy(stats = stats.copy(health = stats.health - amount))
 
-  def getNextAction(state: UniverseSnapshot) = behavior.getNextAction(this, state)
-
   override def withEventQueue(e: EventQueue): Actor = copy(eventQueue = e)
 
   override def withPosition(p: ActorPosition): Actor = copy(position = p)
@@ -38,48 +36,44 @@ case class Actor(id: ActorId,
   lazy val sheduledActionByBehaviour = new ActorSheduledAction(this)
 
   def withSheduledNextEventAfter(dt: Double): Actor = addEventAfter(dt, sheduledActionByBehaviour)
-
 }
 
 object Actor extends Logging {
 
   class ActorSheduledAction(actor: Actor) extends ScheduledAction {
     override def perform(universe: UniverseSnapshot): Future[UniverseSnapshot] =
-      actor.behavior.getNextAction(actor, universe)
+      actor.behavior.getNextAction(actor.id, universe)
   }
 
-  def processAction(action: Action, universe: UniverseSnapshot): UniverseSnapshot =
-    if (action.actor.state != ActorActive)
-      universe
-    else
+  def processAction(action: Action, universe: UniverseSnapshot): UniverseSnapshot = universe.findActorOfType[Actor](action.actorId) match {
+    case Some(actor) if actor.state == ActorActive =>
       action match {
-        case WaitAction(actor, duration) =>
-          universe.updatedActor(actor.id)(_.asInstanceOf[Actor].withSheduledNextEventAfter(duration))
-        case WalkAction(actor, move) =>
+        case WaitAction(actorId, duration) =>
+          universe.updatedActorOfType[Actor](actorId)(_.withSheduledNextEventAfter(duration))
+        case WalkAction(actorId, move) =>
           if (move.length == 0)
-            processAction(WaitAction(actor, 150), universe)
+            processAction(WaitAction(actorId, 150), universe)
           else {
             val duration = move.length * 250
             val newPosition = actor.position.moveWithJumps(move)
             newPosition.surfaceAt match {
               case Some(s) if s.passable =>
-                universe.updatedActor(actor.id)(_.withPosition(newPosition).asInstanceOf[Actor].withSheduledNextEventAfter(duration))
+                universe.updatedActorOfType[Actor](actorId)(_.withPosition(newPosition).withSheduledNextEventAfter(duration))
               case _ =>
-                processAction(WaitAction(actor, 150), universe)
+                processAction(WaitAction(actorId, 150), universe)
+            }
           }
-          }
-        case MeleeAttackAction(actor, target, damage) =>
-          val actorsAt = universe.findActors(target)
+        case MeleeAttackAction(actorId, target, damage) =>
+          val actorsAt = universe.findActorsOfType[Actor](target)
           //      log.debug(s"MeleeAttack: actorsAt=$actorsAt")
           if (actorsAt.isEmpty)
-            processAction(WaitAction(actor, 150), universe)
+            processAction(WaitAction(actorId, 150), universe)
           else {
-            actorsAt.foldLeft(universe)((u, ai) => ai match {
-              case (actorId, _actor: Actor) => u.updatedActor(actorId) {
-                case actor: Actor => actor.decreaseHealth(damage)
-              }
-              case _ => u
-            }).updatedActor(actor.id)(_.asInstanceOf[Actor].withSheduledNextEventAfter(80))
+            actorsAt.foldLeft(universe) { (u, a) =>
+              u.updatedActorOfType[Actor](a.id)(_.decreaseHealth(damage))
+            }.updatedActorOfType[Actor](actorId)(_.withSheduledNextEventAfter(80))
           }
       }
+    case _ => universe
+  }
 }

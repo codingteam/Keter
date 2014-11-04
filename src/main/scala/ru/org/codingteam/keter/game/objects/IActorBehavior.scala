@@ -6,6 +6,5 @@ import scala.concurrent.Future
 
 trait IActorBehavior {
 
-  def getNextAction(actor: Actor, state: UniverseSnapshot): Future[UniverseSnapshot]
-
+  def getNextAction(actorId: ActorId, state: UniverseSnapshot): Future[UniverseSnapshot]
 }

@@ -4,6 +4,7 @@ import ru.org.codingteam.keter.game.objects._
 import ru.org.codingteam.keter.util.Logging
 
 import scala.annotation.tailrec
+import scala.reflect.ClassTag
 
 package object map {
 
@@ -100,23 +101,29 @@ package object map {
   case class UniverseSnapshot(actors: Map[ActorId, ActorLike],
                               playerId: Option[ActorId],
                               globalEvents: EventQueue) extends Logging {
-    lazy val player = playerId flatMap findActor flatMap util.castToOption[Actor]
+    lazy val player = playerId flatMap findActorOfType[Actor]
 
-    def updatedActor(id: ActorId)(f: ActorLike => ActorLike): UniverseSnapshot = {
-      actors get id match {
-        case Some(a) =>
+    def updatedActorOfType[T <: ActorLike : ClassTag](id: ActorId)(f: T => T): UniverseSnapshot = {
+      findActor(id) match {
+        case Some(a: T) =>
           val newActor = f(a)
           if (newActor.id == id)
             copy(actors = actors + (newActor.id -> newActor))
           else
             copy(actors = actors - id + (newActor.id -> newActor))
-        case None => this
+        case _ => this
       }
     }
 
+    def updatedActor(id: ActorId)(f: ActorLike => ActorLike): UniverseSnapshot = updatedActorOfType[ActorLike](id)(f)
+
     def findActor(id: ActorId): Option[ActorLike] = actors get id
 
-    def findActors(position: ObjectPosition) = actors filter (_._2.position.objectPosition == position)
+    def findActorOfType[T <: ActorLike : ClassTag](id: ActorId): Option[T] = findActor(id) flatMap util.castToOption[T]
+
+    def findActors(position: ObjectPosition) = actors filter (_._2.position.objectPosition == position) map (_._2)
+
+    def findActorsOfType[T <: ActorLike : ClassTag](position: ObjectPosition) = findActors(position).flatMap(util.castToOption[T](_))
 
     def createActorsMap: Map[ObjectPosition, List[ActorLike]] = {
       var map = Map[ObjectPosition, List[ActorLike]]()

@@ -29,7 +29,7 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
   override protected def onKeyDown(event: KeyboardEvent): Unit = {
     for (RenderState(universeState, _) <- renderState; player <- universeState.player) {
       if (event.keyCode == ROT.VK_NUMPAD5) {
-        processAction(WaitAction(player))
+        processAction(WaitAction(player.id))
       } else {
         val move = event.keyCode match {
           case x if x == ROT.VK_NUMPAD8 || x == ROT.VK_UP =>
@@ -53,8 +53,8 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
         move map { m =>
           val target = player.position.moveWithJumps(m).objectPosition
           universeState.findActors(target).headOption match {
-            case None => processAction(WalkAction(player, m))
-            case Some((id, actor)) => processAction(MeleeAttackAction(player, target))
+            case None => processAction(WalkAction(player.id, m))
+            case Some(actor) => processAction(MeleeAttackAction(player.id, target))
           }
         }
       }
