@@ -1,5 +1,6 @@
 package ru.org.codingteam.keter.game
 
+import ru.org.codingteam.keter.game.LocationUtils.SubmapSkeleton
 import ru.org.codingteam.keter.game.objects._
 import ru.org.codingteam.keter.game.objects.behaviors.{PlayerBehavior, RandomBehavior}
 import ru.org.codingteam.keter.game.objects.equipment.EquipmentItem
@@ -18,70 +19,70 @@ object Location extends Logging {
       |###########################
       |#.........................#
       |#.........................#
-      |#.........................#
+      |#.......O.................#
       |#...................#.....#
-      |#...................#.....#
-      |#...................#.....#
+      |#...@...............#...b.#
+      |#..............s....#.....#
       |#...................#######
-      |#......................>..#
-      |#.....................#####
-      |#######>###############
+      |#......................A..#
+      |#......d..............#####
+      |#######C###############
       | """.stripMargin.trim
 
   val mapDef2 =
     """
       |###########################
-      |#...................#...>.#
+      |#...................#...B.#
       |#...................#.....#
       |#...................#.....#
       |#......######..######.....#
       |#......#..................#
       |#......#..................#
       |#......#............#######
-      |#......#..................#
+      |#...a..#..................#
       |#......#..................#
       |###########################
       | """.stripMargin.trim
 
   val mapDef3 =
     """
-      |####>#############
-      |>................>
+      |####D#############
+      |Fe..c...........fE
       |#..#..##..###....#
       |####...####......#
       |#......#..###..###
-      |#......#.........#
+      |#....J.#.........#
       |#......#...#######
       |#......#...#
       |############
       | """.stripMargin.trim
 
-  def submapFromString(definition: String, jumps: Map[(Int, Int), Jump] = Map()) = {
-    val rows = definition.split('\n')
-    new Submap(
-      for (y <- rows.indices; row = rows(y)) yield
-        for (x <- row.indices; c = row(x)) yield
-          c match {
-            case '#' => Some(Wall())
-            case '.' => Some(Floor())
-            case '>' =>
-              log.debug(s"Submap build: jump at ($y,$x).")
-              jumps.get((x, y))
-            case _ => None
-          })
-  }
-
   def createLocation(): UniverseSnapshot = {
 
-    lazy val submap1: Submap = submapFromString(mapDef1, Map((23, 8) -> jump11, (7, 10) -> jump12))
-    lazy val submap2: Submap = submapFromString(mapDef2, Map((24, 1) -> jump21))
-    lazy val submap3: Submap = submapFromString(mapDef3, Map((4, 0) -> jump31, (0, 1) -> jump32, (17, 1) -> jump33))
-    lazy val jump11: Jump = Jump(_ => submap2, c => ActorCoords(3, 8, c.t))
-    lazy val jump21: Jump = Jump(_ => submap1, c => ActorCoords(23, 6, c.t), _ * SubspaceMatrix(-1, 0, 0, 0, 1, 0, 0, 0, 1))
-    lazy val jump12: Jump = Jump(_ => submap3, c => ActorCoords(4, 1, c.t))
-    lazy val jump31: Jump = Jump(_ => submap1, c => ActorCoords(7, 9, c.t))
-    lazy val jump32: Jump = Jump(coordsFunc = _ + Move(16, 0), matrixFunc = _ * SubspaceMatrix(1, 0, 0, 0, 1, 0, 0, 0, 2))
-    lazy val jump33: Jump = Jump(coordsFunc = _ + Move(-16, 0), matrixFunc = _ * SubspaceMatrix(1, 0, 0, 0, 1, 0, 0, 0, 0.5))
+    lazy val skel1 = new SubmapSkeleton(mapDef1) replacing('A', 'C', 'b', 'd', '@', 's', 'O') `with` '.'
+    lazy val skel2 = new SubmapSkeleton(mapDef2) replacing('B', 'a') `with` '.'
+    lazy val skel3 = new SubmapSkeleton(mapDef3) replacing('D', 'E', 'F', 'c', 'f', 'e', 'J') `with` '.'
+
+    lazy val submap1: Submap = skel1.buildSubmap(Map(
+      skel1.coordsOf('A') -> jump11,
+      skel1.coordsOf('C') -> jump12))
+    lazy val submap2: Submap = skel2.buildSubmap(Map(
+      skel2.coordsOf('B') -> jump21))
+    lazy val submap3: Submap = skel3.buildSubmap(Map(
+      skel3.coordsOf('D') -> jump31,
+      skel3.coordsOf('E') -> jump32,
+      skel3.coordsOf('F') -> jump33,
+      skel3.coordsOf('J') -> jump34))
+
+    import ru.org.codingteam.keter.game.LocationUtils.{TupleExt, coordFuncFromXY}
+
+    lazy val jump11: Jump = Jump(_ => submap2, coordFuncFromXY(skel2 coordsOf 'a'))
+    lazy val jump21: Jump = Jump(_ => submap1, coordFuncFromXY(skel1 coordsOf 'b'), _ * SubspaceMatrix(-1, 0, 0, 0, 1, 0, 0, 0, 1))
+    lazy val jump12: Jump = Jump(_ => submap3, coordFuncFromXY(skel3 coordsOf 'c'))
+    lazy val jump31: Jump = Jump(_ => submap1, coordFuncFromXY(skel1 coordsOf 'd'))
+    lazy val jump32: Jump = Jump(coordsFunc = coordFuncFromXY(skel3 coordsOf 'e'), matrixFunc = _ * SubspaceMatrix(1, 0, 0, 0, 1, 0, 0, 0, 2))
+    lazy val jump33: Jump = Jump(coordsFunc = coordFuncFromXY(skel3 coordsOf 'f'), matrixFunc = _ * SubspaceMatrix(1, 0, 0, 0, 1, 0, 0, 0, 0.5))
+    lazy val jump34: Jump = Jump(coordsFunc = _ + Move(-1, 0))
 
     val playerId = ActorId()
     var player = human(
@@ -92,7 +93,7 @@ object Location extends Logging {
       playerId,
       ActorPosition(
         submap = submap1,
-        coords = ActorCoords(2, 3),
+        coords = skel1.coordsOf('@').coords,
         subspaceMatrix = SubspaceMatrix.identity)
     )
     player = player.copy(equipment = player.equipment :+ Knife("Knife"))
@@ -105,7 +106,7 @@ object Location extends Logging {
       ActorId(),
       ActorPosition(
         submap = submap1,
-        coords = ActorCoords(8, 9),
+        coords = skel1.coordsOf('s').coords,
         subspaceMatrix = SubspaceMatrix.identity)
     )
     val door = Door(
@@ -114,7 +115,7 @@ object Location extends Logging {
       open = false,
       "|",
       "▯",
-      position = ActorPosition(submap1, ActorCoords(5, 3))
+      position = ActorPosition(submap1, skel1.coordsOf('O').coords)
     )
 
     UniverseSnapshot(
