@@ -4,6 +4,6 @@ import ru.org.codingteam.keter.map.UniverseSnapshot
 
 import scala.concurrent.Future
 
-trait ScheduledAction {
+trait ScheduledEvent {
   def perform(universe: UniverseSnapshot): Future[UniverseSnapshot]
 }

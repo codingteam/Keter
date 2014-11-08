@@ -3,15 +3,15 @@ package ru.org.codingteam.keter.game.objects
 import scala.collection.SortedMap
 
 
-sealed class EventQueue(val timestamp: Double, events: SortedMap[Double, Seq[ScheduledAction]]) {
+sealed class EventQueue(val timestamp: Double, events: SortedMap[Double, Seq[ScheduledEvent]]) {
 
-  def addEvent(at: Double, event: ScheduledAction): EventQueue = {
+  def addEvent(at: Double, event: ScheduledEvent): EventQueue = {
     new EventQueue(timestamp, events + (at -> (events.getOrElse(at, IndexedSeq()) :+ event)))
   }
 
   def nextEventTime: Option[Double] = events.headOption map (_._1)
 
-  def nextEvent: Option[(Double, ScheduledAction)] = events.headOption map {
+  def nextEvent: Option[(Double, ScheduledEvent)] = events.headOption map {
     case (at, actions) => (at, actions.head)
   }
 

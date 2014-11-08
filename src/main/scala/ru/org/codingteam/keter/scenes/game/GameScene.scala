@@ -114,7 +114,7 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
 
 
   private def getColor(actor: ActorLike) = actor match {
-    case a: Actor => a.state match {
+    case p: Person => p.state match {
       case ActorActive => null
       case ActorInactive => "#aaa"
     }
