@@ -101,7 +101,7 @@ package object map {
   case class UniverseSnapshot(actors: Map[ActorId, ActorLike],
                               playerId: Option[ActorId],
                               globalEvents: EventQueue) extends Logging {
-    lazy val player = playerId flatMap findActorOfType[Actor]
+    lazy val player = playerId flatMap findActorOfType[Person]
 
     def updatedActorOfType[T <: ActorLike : ClassTag](id: ActorId)(f: T => T): UniverseSnapshot = {
       findActor(id) match {
@@ -136,7 +136,7 @@ package object map {
       map
     }
 
-    def nextEvent: Option[(Double, ScheduledAction, UniverseSnapshot)] = {
+    def nextEvent: Option[(Double, ScheduledEvent, UniverseSnapshot)] = {
       val delays = (globalEvents.nextEventDelay map ((_, this))).toIndexedSeq ++
         actors.values.flatMap(a => a.nextEventDelay.map((_, a)))
       log.debug(s"Timestamp: ${globalEvents.timestamp}; First event count: ${delays.size}")

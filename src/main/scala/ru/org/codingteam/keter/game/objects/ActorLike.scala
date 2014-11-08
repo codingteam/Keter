@@ -26,7 +26,7 @@ trait ActorLike {
 
   def dropNextEvent(): SelfType = withEventQueue(eventQueue.dropNextEvent())
 
-  def addEventAfter(dt: Double, action: ScheduledAction): SelfType = addEventAt(eventQueue.timestamp + dt, action)
+  def addEventAfter(dt: Double, action: ScheduledEvent): SelfType = addEventAt(eventQueue.timestamp + dt, action)
 
-  def addEventAt(at: Double, action: ScheduledAction): SelfType = withEventQueue(eventQueue.addEvent(at, action))
+  def addEventAt(at: Double, action: ScheduledEvent): SelfType = withEventQueue(eventQueue.addEvent(at, action))
 }
