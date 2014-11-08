@@ -24,11 +24,10 @@ trait StupidMoverBehavior extends IActorBehavior {
           val m = Move(math.signum(actorPos.x - selfPos.x) * to, math.signum(actorPos.y - selfPos.y) * to)
           person.position.subspaceMatrix.rotateMoveBack(m)
         }
-        val action = move match {
-          case Some(m) => WalkAction(actorId, m)
-          case None => WaitAction(actorId)
+        move match {
+          case Some(m) => WalkAction(m).perform(actorId, state)
+          case None => WaitAction().perform(actorId, state)
         }
-        Person.processAction(action, state)
       case None => state
     }
   }

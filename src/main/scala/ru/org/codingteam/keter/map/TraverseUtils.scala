@@ -43,14 +43,18 @@ object TraverseUtils {
 
     def traverse(universe: Universe,
                  from: ActorPosition,
+                 topLimit: Int, bottomLimit: Int, leftLimit: Int, rightLimit: Int): Seq[BoardCell] =
+      traverse(universe.current, from, topLimit, bottomLimit, leftLimit, rightLimit)
+
+    def traverse(universe: UniverseSnapshot,
+                 from: ActorPosition,
                  topLimit: Int, bottomLimit: Int, leftLimit: Int, rightLimit: Int): Seq[BoardCell]
   }
 
   object DiagonalTraverseMethod extends TraverseMethod {
-    override def traverse(universe: Universe,
+    override def traverse(universe: UniverseSnapshot,
                           from: ActorPosition,
                           topLimit: Int, bottomLimit: Int, leftLimit: Int, rightLimit: Int): Seq[BoardCell] = {
-      val currentUniverse = universe.current
       val inRect = createRectLimitsCheck(topLimit, bottomLimit, leftLimit, rightLimit)
       def fillStep(cs: Seq[CoordsTuple]): Seq[CoordsTuple] = {
         def movesFrom(p: BoardCoords): Seq[Move] = {
@@ -81,13 +85,13 @@ object TraverseUtils {
         res ++= acc
         acc = fillStep(acc)
       }
-      coordsTuplesToBoardCells(currentUniverse, res)
+      coordsTuplesToBoardCells(universe, res)
     }
   }
 
   object DirectionLookTraverseMethod extends TraverseMethod {
 
-    override def traverse(universe: Universe,
+    override def traverse(universe: UniverseSnapshot,
                           from: ActorPosition,
                           topLimit: Int, bottomLimit: Int, leftLimit: Int, rightLimit: Int): Seq[BoardCell] = {
       val dirMap = Array.ofDim[ActorPosition](bottomLimit - topLimit + 1, rightLimit - leftLimit + 1,
@@ -135,13 +139,13 @@ object TraverseUtils {
       val cts = for (y <- topLimit to bottomLimit; x <- leftLimit to rightLimit; bc = BoardCoords(x, y)) yield
         CoordsTuple(bc, computeAP(bc))
 
-      coordsTuplesToBoardCells(universe.current, cts)
+      coordsTuplesToBoardCells(universe, cts)
     }
   }
 
   object DirectionLimitedLookTraverseMethod extends TraverseMethod {
 
-    override def traverse(universe: Universe,
+    override def traverse(universe: UniverseSnapshot,
                           from: ActorPosition,
                           topLimit: Int, bottomLimit: Int, leftLimit: Int, rightLimit: Int): Seq[BoardCell] = {
       val dirMap = Array.ofDim[Option[ActorPosition]](bottomLimit - topLimit + 1, rightLimit - leftLimit + 1,
@@ -193,7 +197,7 @@ object TraverseUtils {
       val cts = for (y <- topLimit to bottomLimit; x <- leftLimit to rightLimit; bc = BoardCoords(x, y); ap <- computeAP(bc)) yield
         CoordsTuple(bc, ap)
 
-      coordsTuplesToBoardCells(universe.current, cts)
+      coordsTuplesToBoardCells(universe, cts)
     }
   }
 

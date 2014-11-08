@@ -2,8 +2,9 @@ package ru.org.codingteam.keter.scenes.game
 
 import org.scalajs.dom.KeyboardEvent
 import ru.org.codingteam.keter.game.Engine
-import ru.org.codingteam.keter.game.actions._
+import ru.org.codingteam.keter.game.actions.{WaitAction, WalkAction}
 import ru.org.codingteam.keter.game.objects._
+import ru.org.codingteam.keter.game.objects.equipment.items.Weapon
 import ru.org.codingteam.keter.map.TraverseUtils.{BoardCell, BoardCoords}
 import ru.org.codingteam.keter.map.{Move, Surface, TraverseUtils, UniverseSnapshot}
 import ru.org.codingteam.keter.scenes.Scene
@@ -15,7 +16,7 @@ import scala.concurrent.{Future, Promise}
 
 class GameScene(display: Display, engine: Engine) extends Scene(display) with Logging {
 
-  case class RenderState(universe: UniverseSnapshot, promise: Promise[Action])
+  case class RenderState(universe: UniverseSnapshot, promise: Promise[UniverseSnapshot])
 
   private var _renderState: Option[RenderState] = None
 
@@ -29,7 +30,7 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
   override protected def onKeyDown(event: KeyboardEvent): Unit = {
     for (RenderState(universeState, _) <- renderState; player <- universeState.player) {
       if (event.keyCode == ROT.VK_NUMPAD5) {
-        processAction(WaitAction(player.id))
+        processAction(WaitAction())
       } else {
         val move = event.keyCode match {
           case x if x == ROT.VK_NUMPAD8 || x == ROT.VK_UP =>
@@ -53,8 +54,19 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
         move map { m =>
           val target = player.position.moveWithJumps(m).objectPosition
           universeState.findActors(target).headOption match {
-            case None => processAction(WalkAction(player.id, m))
-            case Some(actor) => processAction(MeleeAttackAction(player.id, target))
+            case None => processAction(WalkAction(m))
+            case Some(actor) =>
+              import ru.org.codingteam.keter.util.castToOption
+              // TODO: weapon selection by user.
+              (for (e <- player.equipment.flatMap(castToOption[Weapon](_));
+                    a <- e.actions.flatMap(castToOption[ObjectActionToActor](_));
+                    if a.description == "attack") yield a).headOption match {
+                case Some(a) =>
+                  log.debug("attack")
+                  processAction(a.bind(actor.id))
+                case None =>
+                  processAction(WaitAction())
+              }
           }
         }
       }
@@ -92,21 +104,20 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
     //    log.debug("Render finished")
   }
 
-  private def processAction(action: Action): Unit = renderState match {
+  private def processAction(action: GenericObjectAction): Unit = renderState match {
     case Some(RenderState(universe, promise)) =>
       log.debug(s"Player action is: $action")
       universe.player match {
-        case Some(a) =>
-          if (action canAct a) {
-            promise.success(action)
+        case Some(player) =>
+          if (action.requires subsetOf player.capabilities(universe)) {
+            promise.success(action.perform(player.id, universe))
             renderState = None
           } else {
             // TODO: show the message on the screen
             log.debug(s"Player can't perform action: $action")
           }
         case _ =>
-          promise.success(action)
-          renderState = None
+          log.warn("No player found")
       }
     case None =>
       log.warn(s"Not requested player`s action: $action")
@@ -121,14 +132,14 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
     case _ => null
   }
 
-  def nextPlayerAction(universe: UniverseSnapshot): Future[Action] = {
+  def performPlayerAction(universe: UniverseSnapshot): Future[UniverseSnapshot] = {
     log.debug("The next player`s action requested")
     if (renderState.isDefined) {
       renderState.get.promise.failure(new RuntimeException("Next player`s action is requested, but previous one has not filled yet!"))
       renderState = None
       log.warn("Previous action was completed with failure")
     }
-    val p = Promise[Action]()
+    val p = Promise[UniverseSnapshot]()
     renderState = Some(RenderState(universe, p))
     p.future
   }
