@@ -136,8 +136,8 @@ object Location extends Logging {
               Arm("left arm", 50.0),
               Arm("right arm", 50.0),
               Head("head", 75.0),
-              Torso("torso", 100.0))): Actor = {
-    Actor(id,
+              Torso("torso", 100.0))): Person = {
+    Person(id,
       faction,
       name,
       tile = Some(tile),

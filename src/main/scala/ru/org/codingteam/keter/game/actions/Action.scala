@@ -1,7 +1,7 @@
 package ru.org.codingteam.keter.game.actions
 
 import ru.org.codingteam.keter.game.objects.equipment.Capability
-import ru.org.codingteam.keter.game.objects.{Actor, ActorId}
+import ru.org.codingteam.keter.game.objects.{ActorId, Person}
 
 trait Action {
 
@@ -9,9 +9,9 @@ trait Action {
 
   def capabilities = Map[Capability, Int]()
 
-  def canAct(actor: Actor): Boolean = {
+  def canAct(person: Person): Boolean = {
     capabilities.forall { case (capability, amount) =>
-      actor.bodyparts.count(_.capabilities.contains(capability)) >= amount
+      person.bodyparts.count(_.capabilities.contains(capability)) >= amount
     }
   }
 
