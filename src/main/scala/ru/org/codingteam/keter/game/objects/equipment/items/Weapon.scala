@@ -19,19 +19,15 @@ case class Knife(name: String,
 
     override def perform(invokerId: ActorId,
                          universe: UniverseSnapshot,
-                         targetId: ActorId): UniverseSnapshot = Person.ifActorIsActive(invokerId, universe) {
-      universe.findActor(invokerId) match {
-        case Some(attacker) =>
-          val near = TraverseUtils.DirectionLookTraverseMethod.traverse(universe, attacker.position, -1, 1, -1, 1)
-          near.find(_.actors.map(_.id).contains(targetId)) match {
-            case Some(bc) =>
-              val dir = BoardCoords(0, 0) to bc.coords
-              universe
-                .updatedActorOfType[Person](targetId)(_.decreaseHealth((damage / dir.length).toInt))
-                .updatedActorOfType[Person](invokerId)(_.withSheduledNextEventAfter(dir.length * 200))
-            case None => WaitAction(100).perform(invokerId, universe)
-          }
-        case None => universe
+                         targetId: ActorId): UniverseSnapshot = Person.ifActorIsActiveF(invokerId, universe) { attacker =>
+      val near = TraverseUtils.DirectionLookTraverseMethod.traverse(universe, attacker.position, -1, 1, -1, 1)
+      near.find(_.actors.map(_.id).contains(targetId)) match {
+        case Some(bc) =>
+          val dir = BoardCoords(0, 0) to bc.coords
+          universe
+            .updatedActorOfType[Person](targetId)(_.decreaseHealth((damage / dir.length).toInt))
+            .updatedActorOfType[Person](invokerId)(_.withSheduledNextEventAfter(dir.length * 200))
+        case None => WaitAction(100).perform(invokerId, universe)
       }
     }
   })

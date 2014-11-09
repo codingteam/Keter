@@ -47,4 +47,10 @@ object Person {
       case Some(p) if p.state == ActorActive => newUniverse
       case _ => oldUniverse
     }
+
+  def ifActorIsActiveF(personId: ActorId, oldUniverse: UniverseSnapshot)(newUniverseFunc: Person => UniverseSnapshot): UniverseSnapshot =
+    oldUniverse.findActorOfType[Person](personId) match {
+      case Some(p) if p.state == ActorActive => newUniverseFunc(p)
+      case _ => oldUniverse
+    }
 }
