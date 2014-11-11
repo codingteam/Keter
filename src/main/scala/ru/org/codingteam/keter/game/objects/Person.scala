@@ -1,8 +1,7 @@
 package ru.org.codingteam.keter.game.objects
 
 import ru.org.codingteam.keter.game.Faction
-import ru.org.codingteam.keter.game.objects.equipment.bodyparts.Bodypart
-import ru.org.codingteam.keter.game.objects.equipment.{Capability, EquipmentItem}
+import ru.org.codingteam.keter.game.objects.equipment.Capability
 import ru.org.codingteam.keter.map.{ActorPosition, UniverseSnapshot}
 
 import scala.concurrent.Future
@@ -14,9 +13,8 @@ case class Person(id: ActorId,
                   state: ActorState,
                   behavior: IActorBehavior,
                   stats: StatTable,
-                  equipment: Seq[EquipmentItem],
+                  inventory: Inventory,
                   position: ActorPosition,
-                  bodyparts: Set[Bodypart],
                   eventQueue: EventQueue = EventQueue.empty) extends ActorLike {
 
   override type SelfType = Person
@@ -37,7 +35,7 @@ case class Person(id: ActorId,
 
   def capabilities(universe: UniverseSnapshot): Set[Capability] = {
     // TODO: check capabilities provided by other sources (objects, equipment).
-    bodyparts.map(_.provides).reduce(_ | _)
+    inventory.body.map(_.provides).reduce(_ | _)
   }
 }
 
