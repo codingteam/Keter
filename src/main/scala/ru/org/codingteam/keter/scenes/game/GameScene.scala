@@ -27,39 +27,38 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
     render()
   }
 
+  val keys = {
+    import ROT._
+    Map(
+      VK_NUMPAD8 -> Move(0, -1),
+      VK_UP -> Move(0, -1),
+      VK_NUMPAD9 -> Move(1, -1),
+      VK_NUMPAD6 -> Move(1, 0),
+      VK_RIGHT -> Move(1, 0),
+      VK_NUMPAD3 -> Move(1, 1),
+      VK_NUMPAD2 -> Move(0, 1),
+      VK_DOWN -> Move(0, 1),
+      VK_NUMPAD1 -> Move(-1, 1),
+      VK_NUMPAD4 -> Move(-1, 0),
+      VK_LEFT -> Move(-1, 0),
+      VK_NUMPAD7 -> Move(-1, -1)
+    )
+  }
+
   override protected def onKeyDown(event: KeyboardEvent): Unit = {
     for (RenderState(universeState, _) <- renderState; player <- universeState.player) {
       if (event.keyCode == ROT.VK_NUMPAD5) {
         processAction(WaitAction())
       } else {
-        val move = event.keyCode match {
-          case x if x == ROT.VK_NUMPAD8 || x == ROT.VK_UP =>
-            Some(Move(0, -1))
-          case x if x == ROT.VK_NUMPAD9 =>
-            Some(Move(1, -1))
-          case x if x == ROT.VK_NUMPAD6 || x == ROT.VK_RIGHT =>
-            Some(Move(1, 0))
-          case x if x == ROT.VK_NUMPAD3 =>
-            Some(Move(1, 1))
-          case x if x == ROT.VK_NUMPAD2 || x == ROT.VK_DOWN =>
-            Some(Move(0, 1))
-          case x if x == ROT.VK_NUMPAD1 =>
-            Some(Move(-1, 1))
-          case x if x == ROT.VK_NUMPAD4 || x == ROT.VK_LEFT =>
-            Some(Move(-1, 0))
-          case x if x == ROT.VK_NUMPAD7 =>
-            Some(Move(-1, -1))
-          case _ => None
-        }
-        move map { m =>
-          val target = player.position.moveWithJumps(m).objectPosition
+        keys.get(event.keyCode) map { move =>
+          val target = player.position.moveWithJumps(move).objectPosition
           universeState.findActors(target).headOption match {
-            case None => processAction(WalkAction(m))
+            case None => processAction(WalkAction(move))
             case Some(actor) =>
               import ru.org.codingteam.keter.util.castToOption
               // TODO: weapon selection by user.
               (for (e <- player.inventory.equipment.flatMap(castToOption[Weapon](_));
-                    a <- e.actions.flatMap(castToOption[ObjectActionToActor](_));
+                    a <- e.actions.flatMap(castToOption[ObjectActionToActor](_))
                     if a.description == "attack") yield a).headOption match {
                 case Some(a) =>
                   log.debug("attack")
