@@ -1,11 +1,12 @@
 package ru.org.codingteam.keter.game.objects.equipment.items
 
 import ru.org.codingteam.keter.game.actions.WaitAction
-import ru.org.codingteam.keter.game.objects.equipment.EquipmentItem
+import ru.org.codingteam.keter.game.objects.equipment.{ManipulatorCapability, Capability, EquipmentItem}
 import ru.org.codingteam.keter.game.objects.{ActorId, ObjectAction, ObjectActionToActor, Person}
 import ru.org.codingteam.keter.map.{TraverseUtils, UniverseSnapshot}
 
 abstract class Weapon extends EquipmentItem {
+  override def provides: Set[Capability] = Set()
   def damage: Int
 }
 
@@ -32,4 +33,7 @@ case class Knife(name: String,
       }
     }
   })
+
+  override val requires: Set[Capability] = Set(ManipulatorCapability)
+
 }

@@ -145,7 +145,7 @@ object Location extends Logging {
       ActorActive,
       behavior,
       StatTable(health = 100),
-      Inventory(bodyparts, items),
+      Inventory(bodyparts, Set(), items),
       position: ActorPosition
     ).withSheduledNextEventAfter(100)
   }
