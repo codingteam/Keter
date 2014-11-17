@@ -1,6 +1,6 @@
 package ru.org.codingteam.keter.game.objects.equipment.bodyparts
 
-import ru.org.codingteam.keter.game.objects.equipment.{Capability, MeleeAttackCapability, WalkCapability}
+import ru.org.codingteam.keter.game.objects.equipment.{Capability, ManipulatorCapability, WalkCapability}
 
 abstract class Bodypart() {
   def name: String
@@ -16,7 +16,7 @@ case class Leg(name: String,
 
 case class Arm(name: String,
                health: Double,
-               provides: Set[Capability] = Set(MeleeAttackCapability)) extends Bodypart
+               provides: Set[Capability] = Set(ManipulatorCapability)) extends Bodypart
 
 case class Head(name: String,
                 health: Double,

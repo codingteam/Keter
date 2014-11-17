@@ -57,7 +57,7 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
             case Some(actor) =>
               import ru.org.codingteam.keter.util.castToOption
               // TODO: weapon selection by user.
-              (for (e <- player.equipment.flatMap(castToOption[Weapon](_));
+              (for (e <- player.inventory.equipment.flatMap(castToOption[Weapon](_));
                     a <- e.actions.flatMap(castToOption[ObjectActionToActor](_))
                     if a.description == "attack") yield a).headOption match {
                 case Some(a) =>

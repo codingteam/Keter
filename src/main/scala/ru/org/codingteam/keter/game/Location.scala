@@ -85,7 +85,7 @@ object Location extends Logging {
     lazy val jump34: Jump = Jump(coordsFunc = _ + Move(-1, 0))
 
     val playerId = ActorId()
-    var player = human(
+    val player = human(
       new PlayerBehavior,
       foundation,
       "Dr. Növer",
@@ -94,9 +94,9 @@ object Location extends Logging {
       ActorPosition(
         submap = submap1,
         coords = skel1.coordsOf('@').coords,
-        subspaceMatrix = SubspaceMatrix.identity)
+        subspaceMatrix = SubspaceMatrix.identity),
+      items = Set(Knife("Knife"))
     )
-    player = player.copy(equipment = player.equipment :+ Knife("Knife"))
 
     val scp = human(
       RandomBehavior,
@@ -136,7 +136,8 @@ object Location extends Logging {
               Arm("left arm", 50.0),
               Arm("right arm", 50.0),
               Head("head", 75.0),
-              Torso("torso", 100.0))): Person = {
+              Torso("torso", 100.0)),
+            items: Set[EquipmentItem] = Set()): Person = {
     Person(id,
       faction,
       name,
@@ -144,9 +145,8 @@ object Location extends Logging {
       ActorActive,
       behavior,
       StatTable(health = 100),
-      Seq[EquipmentItem](),
-      position: ActorPosition,
-      bodyparts: Set[Bodypart]
+      Inventory(bodyparts, Set(), items),
+      position: ActorPosition
     ).withSheduledNextEventAfter(100)
   }
 }
