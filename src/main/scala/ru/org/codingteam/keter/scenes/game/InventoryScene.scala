@@ -28,7 +28,7 @@ class InventoryScene(parentScene: Scene) extends Scene(parentScene.display) with
 
 object InventoryScene {
 
-  def edit(parentScene: Scene)(inventory: Inventory): Future[Option[Inventory]] = {
+  def edit(parentScene: Scene, inventory: Inventory): Future[Option[Inventory]] = {
     val inventoryScene = new InventoryScene(parentScene)
     Application.setScene(inventoryScene)
     inventoryScene.result

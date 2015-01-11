@@ -6,6 +6,7 @@ object ROT extends js.Object {
 
   def VK_DOWN: Int = ???
   def VK_ENTER: Int = ???
+  def VK_I: Int = ???
   def VK_LEFT: Int = ???
   def VK_NUMPAD0: Int = ???
   def VK_NUMPAD1: Int = ???

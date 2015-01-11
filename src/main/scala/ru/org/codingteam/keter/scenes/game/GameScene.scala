@@ -27,48 +27,74 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
     render()
   }
 
+  abstract class PlayerCommand() {
+    def execute(snapshot: UniverseSnapshot, player: Person): Unit
+  }
+
+  case class WaitCommand() extends PlayerCommand() {
+    override def execute(snapshot: UniverseSnapshot, player: Person): Unit = {
+      processAction(WaitAction())
+    }
+  }
+
+  case class MoveCommand(dx: Int, dy: Int) extends PlayerCommand() {
+    override def execute(snapshot: UniverseSnapshot, player: Person): Unit = {
+      val move = Move(dx, dy)
+      val target = player.position.moveWithJumps(move).objectPosition
+      snapshot.findActors(target).headOption match {
+        case None => processAction(WalkAction(move))
+        case Some(actor) =>
+          import ru.org.codingteam.keter.util.castToOption
+          // TODO: weapon selection by user.
+          (for (e <- player.inventory.equipment.flatMap(castToOption[Weapon](_));
+                a <- e.actions.flatMap(castToOption[ObjectActionToActor](_))
+                if a.description == "attack") yield a).headOption match {
+            case Some(a) =>
+              log.debug("attack")
+              processAction(a.bind(actor.id))
+            case None =>
+              processAction(WaitAction())
+          }
+      }
+    }
+  }
+
+  case class InventoryCommand() extends PlayerCommand() {
+    override def execute(snapshot: UniverseSnapshot, player: Person): Unit = {
+      log.info("Entering inventory screen")
+      import scalajs.concurrent.JSExecutionContext.Implicits.queue
+      InventoryScene.edit(GameScene.this, player.inventory).onSuccess {
+        case Some(inventory) =>
+          // TODO: Set inventory to player
+          log.info("Inventory changed: " + inventory)
+        case None =>
+      }
+    }
+  }
+
   val keys = {
     import ROT._
     Map(
-      VK_NUMPAD5 -> WaitAction(),
-      VK_NUMPAD8 -> Move(0, -1),
-      VK_UP -> Move(0, -1),
-      VK_NUMPAD9 -> Move(1, -1),
-      VK_NUMPAD6 -> Move(1, 0),
-      VK_RIGHT -> Move(1, 0),
-      VK_NUMPAD3 -> Move(1, 1),
-      VK_NUMPAD2 -> Move(0, 1),
-      VK_DOWN -> Move(0, 1),
-      VK_NUMPAD1 -> Move(-1, 1),
-      VK_NUMPAD4 -> Move(-1, 0),
-      VK_LEFT -> Move(-1, 0),
-      VK_NUMPAD7 -> Move(-1, -1)
+      VK_NUMPAD5 -> WaitCommand(),
+      VK_NUMPAD8 -> MoveCommand(0, -1),
+      VK_UP -> MoveCommand(0, -1),
+      VK_NUMPAD9 -> MoveCommand(1, -1),
+      VK_NUMPAD6 -> MoveCommand(1, 0),
+      VK_RIGHT -> MoveCommand(1, 0),
+      VK_NUMPAD3 -> MoveCommand(1, 1),
+      VK_NUMPAD2 -> MoveCommand(0, 1),
+      VK_DOWN -> MoveCommand(0, 1),
+      VK_NUMPAD1 -> MoveCommand(-1, 1),
+      VK_NUMPAD4 -> MoveCommand(-1, 0),
+      VK_LEFT -> MoveCommand(-1, 0),
+      VK_NUMPAD7 -> MoveCommand(-1, -1),
+      VK_I -> InventoryCommand()
     )
   }
 
   override protected def onKeyDown(event: KeyboardEvent): Unit = {
     for (RenderState(universeState, _) <- renderState; player <- universeState.player) {
-      keys.get(event.keyCode) map {
-        case wait: WaitAction =>
-          processAction(wait)
-        case move: Move =>
-          val target = player.position.moveWithJumps(move).objectPosition
-          universeState.findActors(target).headOption match {
-            case None => processAction(WalkAction(move))
-            case Some(actor) =>
-              import ru.org.codingteam.keter.util.castToOption
-              // TODO: weapon selection by user.
-              (for (e <- player.inventory.equipment.flatMap(castToOption[Weapon](_));
-                    a <- e.actions.flatMap(castToOption[ObjectActionToActor](_))
-                    if a.description == "attack") yield a).headOption match {
-                case Some(a) =>
-                  log.debug("attack")
-                  processAction(a.bind(actor.id))
-                case None =>
-                  processAction(WaitAction())
-              }
-          }
-      }
+      keys.get(event.keyCode) map(_.execute(universeState, player))
     }
   }
 
