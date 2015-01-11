@@ -30,6 +30,7 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
   val keys = {
     import ROT._
     Map(
+      VK_NUMPAD5 -> WaitAction(),
       VK_NUMPAD8 -> Move(0, -1),
       VK_UP -> Move(0, -1),
       VK_NUMPAD9 -> Move(1, -1),
@@ -47,10 +48,10 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
 
   override protected def onKeyDown(event: KeyboardEvent): Unit = {
     for (RenderState(universeState, _) <- renderState; player <- universeState.player) {
-      if (event.keyCode == ROT.VK_NUMPAD5) {
-        processAction(WaitAction())
-      } else {
-        keys.get(event.keyCode) map { move =>
+      keys.get(event.keyCode) map {
+        case wait: WaitAction =>
+          processAction(wait)
+        case move: Move =>
           val target = player.position.moveWithJumps(move).objectPosition
           universeState.findActors(target).headOption match {
             case None => processAction(WalkAction(move))
@@ -67,7 +68,6 @@ class GameScene(display: Display, engine: Engine) extends Scene(display) with Lo
                   processAction(WaitAction())
               }
           }
-        }
       }
     }
   }
