@@ -8,6 +8,7 @@ import ru.org.codingteam.keter.game.objects.equipment.items.Weapon
 import ru.org.codingteam.keter.map.TraverseUtils.{BoardCell, BoardCoords}
 import ru.org.codingteam.keter.map.{Move, Surface, TraverseUtils, UniverseSnapshot}
 import ru.org.codingteam.keter.scenes.Scene
+import ru.org.codingteam.keter.scenes.inventory.InventoryScene
 import ru.org.codingteam.keter.util.Logging
 import ru.org.codingteam.rotjs.interface.{Display, ROT}
 import ru.org.codingteam.rotjs.wrappers._

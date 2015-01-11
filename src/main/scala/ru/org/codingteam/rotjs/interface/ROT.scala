@@ -4,8 +4,10 @@ import scala.scalajs.js
 
 object ROT extends js.Object {
 
+  def VK_A: Int = ???
   def VK_DOWN: Int = ???
   def VK_ENTER: Int = ???
+  def VK_ESCAPE: Int = ???
   def VK_I: Int = ???
   def VK_LEFT: Int = ???
   def VK_NUMPAD0: Int = ???
