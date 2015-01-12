@@ -1,7 +1,7 @@
 package ru.org.codingteam.keter.scenes.inventory
 
 import ru.org.codingteam.keter.game.objects.Inventory
-import ru.org.codingteam.keter.scenes.mvvm.{TextViewModel, ItemsViewModel}
+import ru.org.codingteam.keter.ui.viewmodels.{ItemsViewModel, TextViewModel}
 
 import scala.concurrent.Promise
 
