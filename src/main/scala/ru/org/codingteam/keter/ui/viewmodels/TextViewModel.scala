@@ -1,5 +1,7 @@
 package ru.org.codingteam.keter.ui.viewmodels
 
-class TextViewModel() {
+abstract class TextViewModel {
+
+  def text: String
 
 }

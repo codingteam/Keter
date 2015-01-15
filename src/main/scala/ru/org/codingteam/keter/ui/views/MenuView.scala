@@ -7,7 +7,6 @@ import ru.org.codingteam.keter.util.Logging
 import ru.org.codingteam.rotjs.interface.{Display, ROT}
 import ru.org.codingteam.rotjs.wrappers._
 
-
 class MenuView(viewModel: MenuViewModel) extends IView with Logging {
 
   private val keyMap = Map[Int, () => Unit](

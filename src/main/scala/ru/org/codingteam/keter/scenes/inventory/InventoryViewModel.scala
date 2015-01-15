@@ -1,7 +1,7 @@
 package ru.org.codingteam.keter.scenes.inventory
 
 import ru.org.codingteam.keter.game.objects.Inventory
-import ru.org.codingteam.keter.ui.viewmodels.{ItemsViewModel, TextViewModel}
+import ru.org.codingteam.keter.ui.viewmodels.{ItemsViewModel, StaticTextViewModel}
 
 import scala.concurrent.Promise
 
@@ -20,6 +20,6 @@ class InventoryViewModel(var inventory: Inventory) {
 
   def backpackItems = new ItemsViewModel() // TODO: Implement source
   def currentFolderItems = new ItemsViewModel() // TODO: Implement change logic
-  def currentItemInfo = new TextViewModel() // TODO: Implement logic
+  def currentItemInfo = new StaticTextViewModel("") // TODO: Implement logic
 
 }
