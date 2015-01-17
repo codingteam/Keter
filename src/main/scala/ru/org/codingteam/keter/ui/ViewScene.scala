@@ -9,7 +9,7 @@ import ru.org.codingteam.keter.util.Logging
 import ru.org.codingteam.rotjs.interface.Display
 import ru.org.codingteam.rotjs.wrappers._
 
-abstract class ViewScene[ViewModel](display: Display) extends Scene(display) with Logging {
+abstract class ViewScene(display: Display) extends Scene(display) with Logging {
 
   def components: Vector[IView]
   private var activeComponent: Option[IView] = None

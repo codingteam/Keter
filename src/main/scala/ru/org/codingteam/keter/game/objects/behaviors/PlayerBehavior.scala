@@ -13,7 +13,7 @@ class PlayerBehavior extends IActorBehavior {
 
   override def getNextAction(actorId: ActorId, state: UniverseSnapshot): Future[UniverseSnapshot] = Application.currentScene match {
     case Some(scene: GameScene) =>
-      scene.performPlayerAction(state)
+      scene.viewModel.map.performPlayerAction(state)
     case _ =>
       Future.failed(new RuntimeException("Player`s action is requested, but current scene is not GameScene"))
   }

@@ -11,7 +11,7 @@ import ru.org.codingteam.rotjs.interface.ROT
 import scala.concurrent.Future
 
 class InventoryScene(parentScene: Scene, inventory: Inventory)
-  extends ViewScene[InventoryViewModel](parentScene.display) with Logging {
+  extends ViewScene(parentScene.display) with Logging {
 
   val viewModel = new InventoryViewModel(inventory)
   val result: Future[Option[Inventory]] = viewModel.result
