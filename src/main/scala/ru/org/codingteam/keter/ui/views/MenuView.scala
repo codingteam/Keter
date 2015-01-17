@@ -1,25 +1,18 @@
 package ru.org.codingteam.keter.ui.views
 
-import org.scalajs.dom.KeyboardEvent
-import ru.org.codingteam.keter.ui.IView
+import ru.org.codingteam.keter.ui.KeyMapView
 import ru.org.codingteam.keter.ui.viewmodels.MenuViewModel
 import ru.org.codingteam.keter.util.Logging
 import ru.org.codingteam.rotjs.interface.{Display, ROT}
 import ru.org.codingteam.rotjs.wrappers._
 
-class MenuView(viewModel: MenuViewModel) extends IView with Logging {
+class MenuView(viewModel: MenuViewModel) extends KeyMapView with Logging {
 
-  private val keyMap = Map[Int, () => Unit](
+  val keyMap = Map(
     ROT.VK_UP -> viewModel.up _,
     ROT.VK_DOWN -> viewModel.down _,
     ROT.VK_RETURN -> viewModel.execute _
   )
-
-  override def onKeyDown(event: KeyboardEvent): Unit = {
-    val action = keyMap.get(event.keyCode)
-    log.info(s"action = $action")
-    action map(_())
-  }
 
   override def render(display: Display): Unit = {
     display.drawTextCentered("Keter", Some(1))
