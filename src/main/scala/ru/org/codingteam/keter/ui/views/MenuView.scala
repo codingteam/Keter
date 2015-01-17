@@ -1,12 +1,12 @@
 package ru.org.codingteam.keter.ui.views
 
-import ru.org.codingteam.keter.ui.KeyMapView
+import ru.org.codingteam.keter.ui.SimpleKeyMapView
 import ru.org.codingteam.keter.ui.viewmodels.MenuViewModel
 import ru.org.codingteam.keter.util.Logging
 import ru.org.codingteam.rotjs.interface.{Display, ROT}
 import ru.org.codingteam.rotjs.wrappers._
 
-class MenuView(viewModel: MenuViewModel) extends KeyMapView with Logging {
+class MenuView(viewModel: MenuViewModel) extends SimpleKeyMapView with Logging {
 
   val keyMap = Map(
     ROT.VK_UP -> viewModel.up _,
