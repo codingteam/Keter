@@ -13,8 +13,6 @@ class GameScene(display: Display, engine: Engine) extends ViewScene(display) wit
     gameMapView(1, 1, display.width - 2, display.height - 5, viewModel.map),
     textView(0, display.height - 3, display.width, 3, viewModel.statInfo))
 
-  override def shouldClear = false
-
   viewModel.map.onRenderStateChanged = Some(() => render())
 
   def gameMapView(x: Int, y: Int, width: Int, height: Int, viewModel: GameMapViewModel) = {

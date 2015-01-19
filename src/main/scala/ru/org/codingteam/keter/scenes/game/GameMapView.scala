@@ -48,7 +48,6 @@ class GameMapView(parent: GameScene, width: Int, height: Int, viewModel: GameMap
   override def render(display: Display): Unit = {
     log.debug("Render called")
     for (universeState <- viewModel.universeState; player <- universeState.player) {
-      parent.display.clear() // TODO: That's not a best solution to clear the whole display inside component
       val fieldContainer = display.viewport(x, y, width, height)
       //      log.debug("Drawing field")
       val (offsetX, offsetY) = (fieldContainer.width / 2 - 1, fieldContainer.height / 2 - 1)

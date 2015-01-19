@@ -14,13 +14,9 @@ abstract class ViewScene(display: Display) extends Scene(display) with Logging {
   def components: Vector[IView]
   private var activeComponent: Option[IView] = None
 
-  def shouldClear() = true // TODO: Remove this; each component should be responsible for clearing its own screen part.
-
   override def render(): Unit = {
-    if (shouldClear()) {
-      display.clear()
-    }
-
+    log.info("render")
+    display.clear()
     components.foreach(_.render(display))
   }
 
