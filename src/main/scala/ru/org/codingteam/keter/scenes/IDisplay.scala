@@ -2,7 +2,6 @@ package ru.org.codingteam.keter.scenes
 
 import ru.org.codingteam.rotjs.interface.Text
 
-
 trait IDisplay {
 
   def draw(x: Int, y: Int, ch: String, fg: String = null, bg: String = null): Unit
@@ -15,14 +14,16 @@ trait IDisplay {
 
   def height: Int
 
-  def drawTextCentered(text: String, y: Option[Int] = None): Unit = {
+  def drawTextCentered(x: Int, y: Int, width: Int, height: Int, text: String, topPadding: Option[Int]): Unit = {
     val measurement = Text.measure(text, width)
 
-    val realX = (width - measurement.width) / 2
-    val realY = y.getOrElse((height - measurement.height) / 2)
+    val realX = x + (width - measurement.width) / 2
+    val realY = y + topPadding.getOrElse((height - measurement.height) / 2)
 
     drawText(realX, realY, text)
   }
+
+  def drawTextCentered(text: String, y: Option[Int] = None): Unit = drawTextCentered(0, 0, width, height, text, y)
 
   def viewport(left: Int, top: Int, width: Int, height: Int, shiftX: Int = 0, shiftY: Int = 0): IDisplay =
     Viewport(this, left, top, width, height, shiftX, shiftY)
