@@ -14,22 +14,24 @@ abstract class ViewScene(display: Display) extends Scene(display) with Logging {
   def components: Vector[IView]
   private var activeComponent: Option[IView] = None
 
+  protected def renderOnKeyDown = Application.currentScene == Some(this)
+
   override def render(): Unit = {
-    log.info("render")
+    log.debug("render")
     display.clear()
     components.foreach(_.render(display))
   }
 
   override def onKeyDown(event: KeyboardEvent): Unit = {
     activeComponent = activeComponent.orElse(components.headOption)
-    log.info(s"activeComponent = $activeComponent")
+    log.debug(s"activeComponent = $activeComponent")
 
     activeComponent map { c =>
-      log.info(s"c = $c")
+      log.debug(s"c = $c")
       c.onKeyDown(event)
     }
 
-    if (Application.currentScene == Some(this)) {
+    if (renderOnKeyDown) {
       render()
     }
   }
