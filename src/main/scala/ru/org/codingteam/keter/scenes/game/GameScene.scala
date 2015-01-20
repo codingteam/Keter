@@ -13,9 +13,14 @@ class GameScene(display: Display, engine: Engine) extends ViewScene(display) wit
     gameMapView(1, 1, display.width - 2, display.height - 5, viewModel.map),
     textView(0, display.height - 3, display.width, 3, viewModel.statInfo))
 
-  override protected def renderOnKeyDown: Boolean = false // GameScene shouldn't be rendered on key down and will be rendered on asynchronous game state change
+  // GameScene shouldn't be rendered on key down and will be rendered on asynchronous game state change
+  override protected def renderOnKeyDown: Boolean = false
 
-  viewModel.map.onRenderStateChanged = Some(() => render())
+  viewModel.map.onRenderStateChanged = Some(() => {
+    if (viewModel.map.renderState.isDefined) {
+      render()
+    }
+  })
 
   def gameMapView(x: Int, y: Int, width: Int, height: Int, viewModel: GameMapViewModel) = {
     val view = new GameMapView(this, width, height, viewModel)
