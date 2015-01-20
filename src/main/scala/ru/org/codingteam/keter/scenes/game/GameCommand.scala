@@ -51,10 +51,10 @@ case class MoveCommand(dx: Int, dy: Int) extends GameCommand with Logging {
 case class InventoryCommand(scene: GameScene) extends GameCommand with Logging {
 
   override def execute(snapshot: UniverseSnapshot, player: Person) = {
-    log.info("Entering inventory screen")
+    log.debug("Entering inventory screen")
     InventoryScene.edit(scene, player.inventory).map {
       case Some(inventory) =>
-        log.info("Inventory changed: " + inventory)
+        log.debug("Inventory changed: " + inventory)
         None // TODO: Change inventory action
       case None =>
         None

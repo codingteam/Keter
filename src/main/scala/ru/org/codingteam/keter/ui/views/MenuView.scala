@@ -20,7 +20,6 @@ class MenuView(viewModel: MenuViewModel) extends SimpleKeyMapView with Logging {
 
     val base = 4
     viewModel.items.zipWithIndex.foreach { case ((name, action), index) =>
-      log.info(s"Drawing with selectedItem = ${viewModel.selectedItem}")
       val (indent, text) = if (index == viewModel.selectedItem) {
         (2, s"> %b{#fff}%c{#000}$name%c{}%b{}")
       } else {

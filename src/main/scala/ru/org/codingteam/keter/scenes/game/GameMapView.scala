@@ -71,9 +71,6 @@ class GameMapView(parent: GameScene, width: Int, height: Int, viewModel: GameMap
             case s: Surface => fieldView.draw(x, y, s.tile)
           }
       }
-      // display stats.
-      //      log.debug("Drawing stats")
-
     }
     //    log.debug("Render finished")
   }
