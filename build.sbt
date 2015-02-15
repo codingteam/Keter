@@ -4,12 +4,14 @@ name := "Keter"
 
 scalaVersion := "2.11.5"
 
+resolvers += Resolver.mavenLocal
+
 libraryDependencies ++= Seq(
   "org.scala-js" %%% "scalajs-dom" % "0.8.0",
-  "org.webjars" % "jquery" % "1.10.2"
+  "org.webjars" % "rot.js" % "0.5.0"
 )
 
-jsDependencies += "org.webjars" % "jquery" % "1.10.2" / "jquery.js"
+jsDependencies += "org.webjars" % "rot.js" % "0.5.0" / "rot.min.js"
 
 skip in packageJSDependencies := false
 
