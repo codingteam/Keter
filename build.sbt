@@ -4,8 +4,6 @@ name := "Keter"
 
 scalaVersion := "2.11.5"
 
-resolvers += Resolver.mavenLocal
-
 libraryDependencies ++= Seq(
   "org.scala-js" %%% "scalajs-dom" % "0.8.0",
   "org.webjars" % "rot.js" % "0.5.0"
