@@ -5,11 +5,14 @@ name := "Keter"
 scalaVersion := "2.11.5"
 
 libraryDependencies ++= Seq(
+  "com.lihaoyi" %% "utest" % "0.3.1",
   "org.scala-js" %%% "scalajs-dom" % "0.8.0",
   "org.webjars" % "rot.js" % "0.5.0"
 )
 
 jsDependencies += "org.webjars" % "rot.js" % "0.5.0" / "rot.min.js"
+
+testFrameworks += new TestFramework("utest.runner.JvmFramework")
 
 skip in packageJSDependencies := false
 
