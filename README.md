@@ -1,4 +1,4 @@
-Keter
+Keter [![Build Status](https://travis-ci.org/codingteam/Keter.svg?branch=develop)](https://travis-ci.org/codingteam/Keter)
 =====
 
 Keter is a [roguelike](http://en.wikipedia.org/wiki/Roguelike) game based on the

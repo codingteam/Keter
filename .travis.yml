@@ -1,0 +1,8 @@
+language: scala
+jdk: oraclejdk8
+scala:
+  - 2.11.5
+script: sbt site
+notifications:
+  email:
+    - friedrich@fornever.me
