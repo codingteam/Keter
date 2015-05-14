@@ -10,7 +10,10 @@ libraryDependencies ++= Seq(
   "org.webjars" % "rot.js" % "0.5.0"
 )
 
-jsDependencies in compile += "org.webjars" % "rot.js" % "0.5.0" / "rot.min.js"
+jsDependencies += "org.webjars" % "rot.js" % "0.5.0" / "rot.min.js"
+
+// We don't want to test JS dependencies:
+jsDependencyFilter in Test := { case _ => List() }
 
 testFrameworks += new TestFramework("utest.runner.Framework")
 
