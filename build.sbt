@@ -2,17 +2,17 @@ enablePlugins(ScalaJSPlugin)
 
 name := "Keter"
 
-scalaVersion := "2.11.5"
+scalaVersion := "2.11.6"
 
 libraryDependencies ++= Seq(
-  "com.lihaoyi" %% "utest" % "0.3.1",
+  "com.lihaoyi" %%% "utest" % "0.3.1",
   "org.scala-js" %%% "scalajs-dom" % "0.8.0",
   "org.webjars" % "rot.js" % "0.5.0"
 )
 
-jsDependencies += "org.webjars" % "rot.js" % "0.5.0" / "rot.min.js"
+jsDependencies in compile += "org.webjars" % "rot.js" % "0.5.0" / "rot.min.js"
 
-testFrameworks += new TestFramework("utest.runner.JvmFramework")
+testFrameworks += new TestFramework("utest.runner.Framework")
 
 skip in packageJSDependencies := false
 
