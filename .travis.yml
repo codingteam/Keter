@@ -1,8 +1,8 @@
 language: scala
 jdk: oraclejdk8
 scala:
-  - 2.11.5
-script: sbt site
+  - 2.11.6
+script: sbt test site
 notifications:
   email:
     - friedrich@fornever.me
