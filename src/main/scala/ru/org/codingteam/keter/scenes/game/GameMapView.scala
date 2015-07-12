@@ -5,16 +5,14 @@ import ru.org.codingteam.keter.game.objects._
 import ru.org.codingteam.keter.map.TraverseUtils.{BoardCell, BoardCoords}
 import ru.org.codingteam.keter.map.{Surface, TraverseUtils}
 import ru.org.codingteam.keter.ui.IView
+import ru.org.codingteam.keter.ui.shape.Rectangle
 import ru.org.codingteam.keter.util.Logging
 import ru.org.codingteam.rotjs.interface.Display
 import ru.org.codingteam.rotjs.wrappers._
 
-class GameMapView(parent: GameScene, width: Int, height: Int, viewModel: GameMapViewModel) extends IView with Logging {
+class GameMapView(shape: Rectangle, parent: GameScene, viewModel: GameMapViewModel) extends IView with Logging {
 
   import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
-
-  var x = 0
-  var y = 0
 
   val keyMap = {
     import ru.org.codingteam.rotjs.interface.ROT._
@@ -48,7 +46,7 @@ class GameMapView(parent: GameScene, width: Int, height: Int, viewModel: GameMap
   override def render(display: Display): Unit = {
     log.debug("Render called")
     for (universeState <- viewModel.universeState; player <- universeState.player) {
-      val fieldContainer = display.viewport(x, y, width, height)
+      val fieldContainer = display.viewport(shape.x, shape.y, shape.width, shape.height)
       //      log.debug("Drawing field")
       val (offsetX, offsetY) = (fieldContainer.width / 2 - 1, fieldContainer.height / 2 - 1)
       val (fieldWidth, fieldHeight) = (offsetX * 2 + 1, offsetY * 2 + 1)

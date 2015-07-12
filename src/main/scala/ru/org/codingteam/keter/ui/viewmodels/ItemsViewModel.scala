@@ -1,5 +1,7 @@
 package ru.org.codingteam.keter.ui.viewmodels
 
-class ItemsViewModel() {
+import scala.collection.immutable.ListMap
+
+class ItemsViewModel[T](values: ListMap[T, String]) {
 
 }
