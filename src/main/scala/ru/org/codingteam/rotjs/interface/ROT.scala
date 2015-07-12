@@ -5,6 +5,7 @@ import scala.scalajs.js
 object ROT extends js.Object {
 
   def VK_A: Int = ???
+  def VK_CLOSE_BRACKET: Int = ???
   def VK_DOWN: Int = ???
   def VK_ENTER: Int = ???
   def VK_ESCAPE: Int = ???
@@ -20,8 +21,8 @@ object ROT extends js.Object {
   def VK_NUMPAD7: Int = ???
   def VK_NUMPAD8: Int = ???
   def VK_NUMPAD9: Int = ???
+  def VK_OPEN_BRACKET: Int = ???
   def VK_RETURN: Int = ???
   def VK_RIGHT: Int = ???
   def VK_UP: Int = ???
-
 }
