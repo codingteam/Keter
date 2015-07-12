@@ -5,6 +5,7 @@ import ru.org.codingteam.keter.Application
 import ru.org.codingteam.keter.game.objects.Inventory
 import ru.org.codingteam.keter.scenes.Scene
 import ru.org.codingteam.keter.ui.ViewScene
+import ru.org.codingteam.keter.ui.shape.Rectangle
 import ru.org.codingteam.keter.util.Logging
 import ru.org.codingteam.rotjs.interface.ROT
 
@@ -17,9 +18,9 @@ class InventoryScene(parentScene: Scene, inventory: Inventory)
   val result: Future[Option[Inventory]] = viewModel.result
 
   override val components = Vector(
-    listView(0, 0, 40, 40, backpackItems),
-    listView(40, 0, 40, 40, currentFolderItems),
-    textView(0, 40, 80, 40, currentItemInfo))
+    listView(Rectangle(0, 0, 40, 40), backpackCategories),
+    listView(Rectangle(40, 0, 40, 40), currentFolderItems),
+    textView(Rectangle(0, 40, 80, 40), currentItemInfo))
 
   override def onKeyDown(event: KeyboardEvent): Unit = {
     super.onKeyDown(event)
@@ -31,10 +32,9 @@ class InventoryScene(parentScene: Scene, inventory: Inventory)
     }
   }
 
-  private def backpackItems = viewModel.backpackItems
+  private def backpackCategories = viewModel.backpackCategories
   private def currentFolderItems = viewModel.currentFolderItems
   private def currentItemInfo = viewModel.currentItemInfo
-
 }
 
 object InventoryScene {
@@ -44,5 +44,4 @@ object InventoryScene {
     Application.setScene(inventoryScene)
     inventoryScene.viewModel.result
   }
-
 }
