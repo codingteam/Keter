@@ -8,6 +8,11 @@ import ru.org.codingteam.keter.game.objects.ObjectAction
 abstract class EquipmentItem {
 
   /**
+   * Category of this item.
+   */
+  def category: EquipmentCategory.Value
+
+  /**
    * Name of equipment item.
    */
   def name: String
@@ -27,5 +32,4 @@ abstract class EquipmentItem {
    * Set of capabilities provided by this equipment item.
    */
   def provides: Set[Capability]
-
 }

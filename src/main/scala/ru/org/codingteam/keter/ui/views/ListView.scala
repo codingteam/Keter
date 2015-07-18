@@ -12,7 +12,7 @@ class ListView[T](shape: Rectangle, model: ItemsViewModel[T]) extends SimpleKeyM
 
   override def render(display: Display): Unit = {
     val margin = 1
-    model.items.zipWithIndex foreach { case ((value, name), index) =>
+    model.items.vector.zipWithIndex foreach { case ((value, name), index) =>
       val y = shape.y + index
       if (index > shape.height) {
         return
