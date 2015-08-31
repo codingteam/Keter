@@ -43,15 +43,19 @@ class InventoryViewModel(var inventory: Inventory) {
       inventory.equipment.contains(item)
     }
 
-    def unequip(item: EquipmentItem): Unit = {
+    def toggleSelected() = {
       selectedItem foreach { item =>
-        inventory = inventory.copy(backpack = inventory.backpack + item, equipment = inventory.equipment - item)
-      }
-    }
+        var backpack = inventory.backpack
+        var equipment = inventory.equipment
+        if (equipped(item)) {
+          equipment -= item
+          backpack += item
+        } else {
+          backpack -= item
+          equipment += item
+        }
 
-    def equip(item: EquipmentItem): Unit = {
-      selectedItem foreach { item =>
-        inventory = inventory.copy(backpack = inventory.backpack - item, equipment = inventory.equipment + item)
+        inventory = inventory.copy(backpack = backpack, equipment = equipment)
       }
     }
   }
