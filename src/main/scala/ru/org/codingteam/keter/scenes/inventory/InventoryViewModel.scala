@@ -26,14 +26,8 @@ class InventoryViewModel(var inventory: Inventory) {
   ) {
 
     override protected def onSelectedItemChanged(item: Option[EquipmentCategory.Value]): Unit = {
-      val folderItems = item match {
-        case None => VectorMap[EquipmentItem, String]()
-        case Some(category) =>
-          val equipment = inventory.allEquipment.filter(e => category.contains(e.category))
-          toVectorMap(equipment.toSeq)
-      }
-
-      currentFolderItems.items = folderItems
+      val folderItems = item.toSeq flatMap (category => inventory.allEquipment.filter(e => category.contains(e.category)))
+      currentFolderItems.items = toVectorMap(folderItems)
     }
   }
 
