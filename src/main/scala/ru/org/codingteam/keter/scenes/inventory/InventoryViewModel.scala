@@ -37,7 +37,13 @@ class InventoryViewModel(var inventory: Inventory) {
     }
   }
 
-  val currentFolderItems = new ItemsViewModel[EquipmentItem](toVectorMap(inventory.allEquipment.toSeq))
+  val currentFolderItems = new ItemsViewModel[EquipmentItem](toVectorMap(inventory.allEquipment.toSeq)) {
+
+    def equipped(item: EquipmentItem): Boolean = {
+      inventory.equipment.contains(item)
+    }
+  }
+
   val currentItemInfo = new StaticTextViewModel("") // TODO: Implement logic
 
   private def toVectorMap(items: Seq[EquipmentItem]): VectorMap[EquipmentItem, String] = {
