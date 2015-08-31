@@ -9,4 +9,10 @@ import ru.org.codingteam.keter.game.objects.equipment.bodyparts.Bodypart
  * @param equipment equipped items.
  * @param backpack items not equipped.
  */
-case class Inventory(body: Set[Bodypart], equipment: Set[EquipmentItem], backpack: Set[EquipmentItem])
+case class Inventory(body: Set[Bodypart], equipment: Set[EquipmentItem], backpack: Set[EquipmentItem]) {
+
+  /**
+   * @return list of all inventory items either equipped or not.
+   */
+  def allEquipment = equipment ++ backpack
+}

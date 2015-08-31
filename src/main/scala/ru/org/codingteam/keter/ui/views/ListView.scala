@@ -8,26 +8,48 @@ import ru.org.codingteam.rotjs.interface.{ROT, Display}
 /**
  * A list of typed items.
  */
-class ListView[T](shape: Rectangle, model: ItemsViewModel[T]) extends SimpleKeyMapView {
+class ListView[T](shape: Rectangle,
+                  model: ItemsViewModel[T],
+                  override val keyMap: ListView.KeyMap) extends SimpleKeyMapView {
+
+  /**
+   * A pair of model item and its name.
+   */
+  protected type Item = (T, String)
 
   override def render(display: Display): Unit = {
     val margin = 1
-    model.items.zipWithIndex foreach { case ((value, name), index) =>
+    model.items.vector.zipWithIndex foreach { case (item, index) =>
       val y = shape.y + index
       if (index > shape.height) {
         return
       }
 
-      if (model.selectedIndex.contains(index)) {
-        display.draw(shape.x, y, ">")
-      }
-
-      display.drawText(shape.x + margin, y, name, shape.width - 2 * margin)
+      renderItem(display, item, shape.x + margin, y, shape.width - 2 * margin)
     }
   }
 
-  override val keyMap = Map(
+  protected def renderItem(display: Display, item: Item, x: Int, y: Int, width: Int): Unit = {
+    val (value, name) = item
+    if (model.selectedItem.contains(value)) {
+      display.draw(shape.x, y, ">")
+    }
+
+    display.drawText(x, y, name, width)
+  }
+}
+
+object ListView {
+
+  type KeyMap = Map[Int, () => Unit]
+
+  def bracketKeyMap[T](model: ItemsViewModel[T]): KeyMap = Map(
     ROT.VK_OPEN_BRACKET -> model.up _,
     ROT.VK_CLOSE_BRACKET -> model.down _
+  )
+
+  def arrowKeyMap[T](model: ItemsViewModel[T]): KeyMap = Map(
+    ROT.VK_UP -> model.up _,
+    ROT.VK_DOWN -> model.down _
   )
 }

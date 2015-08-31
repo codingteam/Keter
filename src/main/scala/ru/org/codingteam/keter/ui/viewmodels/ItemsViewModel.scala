@@ -1,14 +1,14 @@
 package ru.org.codingteam.keter.ui.viewmodels
 
-import scala.collection.immutable.ListMap
+import ru.org.codingteam.keter.util.VectorMap
 
-class ItemsViewModel[T](initialItems: ListMap[T, String]) {
+class ItemsViewModel[T](initialItems: VectorMap[T, String]) {
 
-  private var _items: ListMap[T, String] = initialItems
+  private var _items: VectorMap[T, String] = initialItems
   private var _selectedIndex: Option[Int] = initialIndex()
 
   def items = _items
-  def items_=(newItems: ListMap[T, String]): Unit = {
+  def items_=(newItems: VectorMap[T, String]): Unit = {
     _items = newItems
     _selectedIndex = initialIndex()
   }
@@ -26,7 +26,11 @@ class ItemsViewModel[T](initialItems: ListMap[T, String]) {
       case Some(index) =>
         _selectedIndex = newIndex
     }
+
+    onSelectedItemChanged(selectedItem)
   }
+
+  def selectedItem = _selectedIndex map { index => _items(index)._1 }
 
   def up(): Unit = {
     _selectedIndex foreach { value => selectedIndex = Some(value - 1) }
@@ -36,5 +40,7 @@ class ItemsViewModel[T](initialItems: ListMap[T, String]) {
     _selectedIndex foreach { value => selectedIndex = Some(value + 1) }
   }
 
-  private def initialIndex(): Option[Int] = _items.headOption.map(_ => 0)
+  protected def onSelectedItemChanged(item: Option[T]) = ()
+
+  private def initialIndex(): Option[Int] = _items.vector.headOption.map(_ => 0)
 }
