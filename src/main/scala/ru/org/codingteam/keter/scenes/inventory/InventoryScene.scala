@@ -37,18 +37,21 @@ class InventoryScene(parentScene: Scene, inventory: Inventory)
   private def currentFolderItems = viewModel.currentFolderItems
   private def currentItemInfo = viewModel.currentItemInfo
 
-  private def folderView(shape: Rectangle) = new ListView(shape, currentFolderItems) {
+  private def folderView(shape: Rectangle) = {
+    val model = currentFolderItems
+    new ListView(shape, model, ListView.arrowKeyMap(model)) {
 
-    override protected def renderItem(display: Display, item: Item, x: Int, y: Int, width: Int): Unit = {
-      val (value, name) = item
-      val newName = if (currentFolderItems.equipped(value)) {
-        // Render equipped items in gray color.
-        s"%c{gray}$name%c{}"
-      } else {
-        name
+      override protected def renderItem(display: Display, item: Item, x: Int, y: Int, width: Int): Unit = {
+        val (value, name) = item
+        val newName = if (model.equipped(value)) {
+          // Render equipped items in gray color.
+          s"%c{gray}$name%c{}"
+        } else {
+          name
+        }
+
+        super.renderItem(display, (value, newName), x, y, width)
       }
-
-      super.renderItem(display, (value, newName), x, y, width)
     }
   }
 }
