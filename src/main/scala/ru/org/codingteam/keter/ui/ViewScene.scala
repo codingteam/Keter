@@ -13,7 +13,6 @@ import ru.org.codingteam.rotjs.wrappers._
 abstract class ViewScene(display: Display) extends Scene(display) with Logging {
 
   def components: Vector[IView]
-  private var activeComponent: Option[IView] = None
 
   protected def renderOnKeyDown = Application.currentScene.contains(this)
 
@@ -24,13 +23,7 @@ abstract class ViewScene(display: Display) extends Scene(display) with Logging {
   }
 
   override def onKeyDown(event: KeyboardEvent): Unit = {
-    activeComponent = activeComponent.orElse(components.headOption)
-    log.debug(s"activeComponent = $activeComponent")
-
-    activeComponent map { c =>
-      log.debug(s"c = $c")
-      c.onKeyDown(event)
-    }
+    components.foreach(_.onKeyDown(event))
 
     if (renderOnKeyDown) {
       render()
