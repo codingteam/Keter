@@ -39,7 +39,19 @@ class InventoryScene(parentScene: Scene, inventory: Inventory)
 
   private def folderView(shape: Rectangle) = {
     val model = currentFolderItems
-    new ListView(shape, model, ListView.arrowKeyMap(model)) {
+    def defaultAction() = {
+      model.selectedItem foreach { case item =>
+        if (model.equipped(item)) {
+          model.unequip(item)
+        } else {
+          model.equip(item)
+        }
+      }
+    }
+
+    val keyMap = ListView.arrowKeyMap(model) + (ROT.VK_RETURN -> defaultAction _)
+
+    new ListView(shape, model, keyMap) {
 
       override protected def renderItem(display: Display, item: Item, x: Int, y: Int, width: Int): Unit = {
         val (value, name) = item

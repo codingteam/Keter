@@ -42,6 +42,18 @@ class InventoryViewModel(var inventory: Inventory) {
     def equipped(item: EquipmentItem): Boolean = {
       inventory.equipment.contains(item)
     }
+
+    def unequip(item: EquipmentItem): Unit = {
+      selectedItem foreach { item =>
+        inventory = inventory.copy(backpack = inventory.backpack + item, equipment = inventory.equipment - item)
+      }
+    }
+
+    def equip(item: EquipmentItem): Unit = {
+      selectedItem foreach { item =>
+        inventory = inventory.copy(backpack = inventory.backpack - item, equipment = inventory.equipment + item)
+      }
+    }
   }
 
   val currentItemInfo = new StaticTextViewModel("") // TODO: Implement logic
