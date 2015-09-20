@@ -28,9 +28,15 @@ class InventoryScene(parentScene: Scene, inventory: Inventory)
 
     if (event.keyCode == ROT.VK_A) {
       viewModel.applyChanges()
+      close()
     } else if (event.keyCode == ROT.VK_ESCAPE) {
       viewModel.rejectChanges()
+      close()
     }
+  }
+
+  def close(): Unit = {
+    Application.setScene(parentScene)
   }
 
   private def backpackCategories = viewModel.backpackCategories
