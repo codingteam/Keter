@@ -28,3 +28,10 @@ Alpha version
 -------------
 
 You can always check an alpha version running at [keter.fornever.me](http://keter.fornever.me).
+
+Development
+-----------
+While developing the game, you may find useful continuously rerunning the tests
+and recompiling the site. It may be done with the following command:
+
+    $ sbt ~;test;site

@@ -1,6 +1,6 @@
 package ru.org.codingteam.keter.scenes.game
 
-import ru.org.codingteam.keter.game.actions.{WaitAction, WalkAction}
+import ru.org.codingteam.keter.game.actions.{InventoryChangeAction, WaitAction, WalkAction}
 import ru.org.codingteam.keter.game.objects.equipment.items.Weapon
 import ru.org.codingteam.keter.game.objects.{GenericObjectAction, ObjectActionToActor, Person}
 import ru.org.codingteam.keter.map.{Move, UniverseSnapshot}
@@ -55,10 +55,9 @@ case class InventoryCommand(scene: GameScene) extends GameCommand with Logging {
     InventoryScene.edit(scene, player.inventory).map {
       case Some(inventory) =>
         log.debug("Inventory changed: " + inventory)
-        None // TODO: Change inventory action
+        Some(InventoryChangeAction(inventory))
       case None =>
         None
     }
   }
-
 }

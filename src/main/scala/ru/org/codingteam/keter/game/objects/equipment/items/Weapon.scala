@@ -12,7 +12,7 @@ abstract class Weapon extends EquipmentItem {
 }
 
 case class Knife(name: String,
-                 damage: Int = 100) extends Weapon {
+                 damage: Int = 50) extends Weapon {
 
   val cooldown = 200
   val missCooldown = 100
