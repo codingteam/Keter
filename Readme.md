@@ -10,6 +10,8 @@ language using the [Scala.js](http://www.scala-js.org/) compiler.
 Running the game
 ----------------
 
+First of all, you'll need [node.js][node-js] 6.9.1+ to pack the application.
+
 Install the actual version of the [`sbt` tool](http://www.scala-sbt.org/). Run the following from the terminal:
 
     $ sbt site
@@ -42,3 +44,4 @@ Keter is licensed under the terms of MIT License. See `License.md` file for
 details.
 
 [docs]: docs/
+[node-js]: https://nodejs.org/
