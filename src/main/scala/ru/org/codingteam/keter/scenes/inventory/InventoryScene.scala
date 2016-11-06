@@ -8,7 +8,8 @@ import ru.org.codingteam.keter.ui.ViewScene
 import ru.org.codingteam.keter.ui.shape.Rectangle
 import ru.org.codingteam.keter.ui.views.ListView
 import ru.org.codingteam.keter.util.Logging
-import ru.org.codingteam.rotjs.interface.{Display, ROT}
+import ru.org.codingteam.rotjs.interface.ROT
+import ru.org.codingteam.rotjs.interface.ROT.Display
 
 import scala.concurrent.Future
 

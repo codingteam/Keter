@@ -1,6 +1,6 @@
 package ru.org.codingteam.keter.scenes
 
-import ru.org.codingteam.rotjs.interface.Text
+import ru.org.codingteam.rotjs.interface.ROT.Text
 
 trait IDisplay {
 

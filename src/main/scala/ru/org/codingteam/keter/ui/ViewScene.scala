@@ -4,10 +4,10 @@ import org.scalajs.dom.KeyboardEvent
 import ru.org.codingteam.keter.Application
 import ru.org.codingteam.keter.scenes.Scene
 import ru.org.codingteam.keter.ui.shape.Rectangle
-import ru.org.codingteam.keter.ui.viewmodels.{StaticTextViewModel, MenuViewModel, TextViewModel, ItemsViewModel}
-import ru.org.codingteam.keter.ui.views.{ListView, TextView, MenuView}
+import ru.org.codingteam.keter.ui.viewmodels.{ItemsViewModel, MenuViewModel, StaticTextViewModel, TextViewModel}
+import ru.org.codingteam.keter.ui.views.{ListView, MenuView, TextView}
 import ru.org.codingteam.keter.util.Logging
-import ru.org.codingteam.rotjs.interface.Display
+import ru.org.codingteam.rotjs.interface.ROT.Display
 import ru.org.codingteam.rotjs.wrappers._
 
 abstract class ViewScene(display: Display) extends Scene(display) with Logging {

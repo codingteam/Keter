@@ -1,7 +1,7 @@
 package ru.org.codingteam.rotjs
 
 import ru.org.codingteam.keter.scenes.IDisplay
-import ru.org.codingteam.rotjs.interface.Display
+import ru.org.codingteam.rotjs.interface.ROT.Display
 
 package object wrappers {
 

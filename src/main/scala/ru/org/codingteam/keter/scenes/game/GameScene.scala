@@ -4,7 +4,7 @@ import ru.org.codingteam.keter.game.Engine
 import ru.org.codingteam.keter.ui.ViewScene
 import ru.org.codingteam.keter.ui.shape.Rectangle
 import ru.org.codingteam.keter.util.Logging
-import ru.org.codingteam.rotjs.interface.Display
+import ru.org.codingteam.rotjs.interface.ROT.Display
 import ru.org.codingteam.rotjs.wrappers._
 
 class GameScene(display: Display, engine: Engine) extends ViewScene(display) with Logging {

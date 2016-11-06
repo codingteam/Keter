@@ -3,7 +3,8 @@ package ru.org.codingteam.keter.ui.views
 import ru.org.codingteam.keter.ui.SimpleKeyMapView
 import ru.org.codingteam.keter.ui.viewmodels.MenuViewModel
 import ru.org.codingteam.keter.util.Logging
-import ru.org.codingteam.rotjs.interface.{Display, ROT}
+import ru.org.codingteam.rotjs.interface.ROT
+import ru.org.codingteam.rotjs.interface.ROT.Display
 import ru.org.codingteam.rotjs.wrappers._
 
 class MenuView(viewModel: MenuViewModel) extends SimpleKeyMapView with Logging {

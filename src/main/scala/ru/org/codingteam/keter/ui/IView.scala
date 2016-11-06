@@ -1,7 +1,7 @@
 package ru.org.codingteam.keter.ui
 
 import org.scalajs.dom.KeyboardEvent
-import ru.org.codingteam.rotjs.interface.Display
+import ru.org.codingteam.rotjs.interface.ROT.Display
 
 trait IView {
 

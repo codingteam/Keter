@@ -4,7 +4,7 @@ import org.scalajs.dom.KeyboardEvent
 import ru.org.codingteam.keter.ui.IView
 import ru.org.codingteam.keter.ui.shape.Rectangle
 import ru.org.codingteam.keter.ui.viewmodels.TextViewModel
-import ru.org.codingteam.rotjs.interface.Display
+import ru.org.codingteam.rotjs.interface.ROT.Display
 import ru.org.codingteam.rotjs.wrappers._
 
 class TextView(shape: Rectangle, model: TextViewModel) extends IView {

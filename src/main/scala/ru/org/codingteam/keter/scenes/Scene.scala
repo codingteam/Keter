@@ -1,7 +1,7 @@
 package ru.org.codingteam.keter.scenes
 
 import org.scalajs.dom.{KeyboardEvent, document}
-import ru.org.codingteam.rotjs.interface.Display
+import ru.org.codingteam.rotjs.interface.ROT.Display
 
 abstract class Scene(val display: Display) {
 

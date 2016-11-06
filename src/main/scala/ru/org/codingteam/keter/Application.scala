@@ -3,7 +3,8 @@ package ru.org.codingteam.keter
 import org.scalajs.dom.document
 import ru.org.codingteam.keter.scenes.Scene
 import ru.org.codingteam.keter.scenes.menu.MainMenuScene
-import ru.org.codingteam.rotjs.interface.{DisplayOptions, Display}
+import ru.org.codingteam.rotjs.interface.DisplayOptions
+import ru.org.codingteam.rotjs.interface.ROT.Display
 
 import scala.scalajs.js
 import scala.scalajs.js.JSApp

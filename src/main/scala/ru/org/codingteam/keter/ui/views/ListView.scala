@@ -3,7 +3,8 @@ package ru.org.codingteam.keter.ui.views
 import ru.org.codingteam.keter.ui.SimpleKeyMapView
 import ru.org.codingteam.keter.ui.shape.Rectangle
 import ru.org.codingteam.keter.ui.viewmodels.ItemsViewModel
-import ru.org.codingteam.rotjs.interface.{ROT, Display}
+import ru.org.codingteam.rotjs.interface.ROT.Display
+import ru.org.codingteam.rotjs.interface.ROT
 
 /**
  * A list of typed items.

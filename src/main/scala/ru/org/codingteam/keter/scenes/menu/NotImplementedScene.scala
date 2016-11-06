@@ -4,7 +4,8 @@ import org.scalajs.dom.KeyboardEvent
 import ru.org.codingteam.keter.Application
 import ru.org.codingteam.keter.scenes.Scene
 import ru.org.codingteam.keter.ui.{IView, ViewScene}
-import ru.org.codingteam.rotjs.interface.{Display, ROT}
+import ru.org.codingteam.rotjs.interface.ROT
+import ru.org.codingteam.rotjs.interface.ROT.Display
 
 class NotImplementedScene(display: Display, parentScene: Scene) extends ViewScene(display) {
 
