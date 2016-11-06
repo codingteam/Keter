@@ -21,8 +21,7 @@ You may publish the `site` directory through Web server if you wish to provide t
 Game design documents
 ---------------------
 
-All game design documents are publicly available through
-[our Google Drive directory](https://drive.google.com/folderview?id=0B6wGx1U8enR0YUtFYy1LNEJ5cm8&usp=sharing).
+All game design documents (in Russian) are available in the [docs][] directory.
 
 Alpha version
 -------------
@@ -41,3 +40,5 @@ License
 
 Keter is licensed under the terms of MIT License. See `License.md` file for
 details.
+
+[docs]: docs/
