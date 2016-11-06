@@ -1,8 +1,10 @@
 enablePlugins(ScalaJSPlugin)
 
+enablePlugins(ScalaJSBundlerPlugin)
+
 name := "Keter"
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
   "com.lihaoyi" %%% "utest" % "0.3.1",
@@ -10,10 +12,7 @@ libraryDependencies ++= Seq(
   "org.webjars" % "rot.js" % "0.5.0"
 )
 
-jsDependencies += "org.webjars" % "rot.js" % "0.5.0" / "rot.min.js"
-
-// We don't want to test JS dependencies:
-jsDependencyFilter in Test := { case _ => List() }
+npmDependencies in Compile += "rot-js" -> "0.6.2"
 
 testFrameworks += new TestFramework("utest.runner.Framework")
 
@@ -27,18 +26,15 @@ sitePath := "site"
 
 site := {
   import java.nio.file.{Files, StandardCopyOption}
-  (fastOptJS in Compile).value
+  (webpack in fullOptJS in Compile).value
   val targetDirectory = target.value / sitePath.value
-  val sourceJS = target.value / "scala-2.11" / "keter-fastopt.js"
-  val sourceMap = target.value / "scala-2.11" / "keter-fastopt.js.map"
-  val sourceJSDeps = target.value / "scala-2.11" / "keter-jsdeps.js"
+  val sourceJS = target.value / "scala-2.11" / "keter-opt-bundle.js"
+  val sourceMap = target.value / "scala-2.11" / "keter-opt-bundle.js.map"
   val targetJS = targetDirectory / "keter.js"
   val targetMap = targetDirectory / sourceMap.name
-  val targetJSDeps = targetDirectory / sourceJSDeps.name
   targetJS.mkdirs()
   Files.copy(sourceJS.toPath, targetJS.toPath, StandardCopyOption.REPLACE_EXISTING)
   Files.copy(sourceMap.toPath, targetMap.toPath, StandardCopyOption.REPLACE_EXISTING)
-  Files.copy(sourceJSDeps.toPath, targetJSDeps.toPath, StandardCopyOption.REPLACE_EXISTING)
   (resourceDirectory in Compile).value.listFiles() foreach { file =>
     val targetFile = targetDirectory / file.name
     Files.copy(file.toPath, targetFile.toPath, StandardCopyOption.REPLACE_EXISTING)
