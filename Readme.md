@@ -35,3 +35,9 @@ While developing the game, you may find useful continuously rerunning the tests
 and recompiling the site. It may be done with the following command:
 
     $ sbt ~;test;site
+
+License
+-------
+
+Keter is licensed under the terms of MIT License. See `License.md` file for
+details.
