@@ -1,5 +1,5 @@
-Keter: Основная механика
-========================
+Keter: General concepts
+=======================
 
 # Objects
 Everything that is not part of the landscape -- meaning, everything that is not a floor, a wall or somesuch -- is an object. Any and all objects can carry and possess effects that describe how they can be interacted with and how they interact with the environment. The objects are broadly divided into two categories:

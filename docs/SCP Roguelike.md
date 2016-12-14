@@ -1,5 +1,5 @@
-SCP Roguelike
-=============
+Keter: SCP Roguelike
+====================
 
 This document deals with broad considerations and high-level concepts.
 
