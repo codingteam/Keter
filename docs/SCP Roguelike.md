@@ -88,7 +88,7 @@ Focuses on anomalous objects production
 * Combat ability: average
 
 ### Special traits
-* Assembly required
+* Frontline assembly
 * You're screwed
 
 ## The Serpent's Hand
