@@ -1,0 +1,30 @@
+// This script will build and deploy the current Keter version to the target server.
+// Required properties:
+// - GIT_BRANCH: name of the branch to deploy
+// - GIT_CREDENTIALS: credentials to download the source code
+// - MAINTAINERS: space-separated email list
+// - SBT: path to SBT launcher
+// - TARGET_PATH: path to publish the artifacts
+node {
+    stage 'Checkout'
+    git branch: GIT_BRANCH,
+      credentialsId: GIT_CREDENTIALS,
+      url: 'git@github.com:codingteam/Keter.git'
+
+    stage 'Clean'
+    bat "$SBT clean"
+
+    stage 'Build'
+    bat "$SBT site"
+
+    stage 'Deploy'
+    bat "powershell scripts/Deploy.ps1 $TARGET_PATH"
+
+    stage 'Notify'
+    def isSuccess = currentBuild.result == null
+    def buildStatus = isSuccess ? 'SUCCESS' : currentBuild.result
+
+    mail to: MAINTAINERS, subject: "${env.JOB_NAME}#${env.BUILD_NUMBER}: ${buildStatus}", body: """Build #${env.BUILD_NUMBER} of Jenkins job ${env.JOB_NAME} finished with status ${buildStatus}.
+
+Check ${env.BUILD_URL} for details."""
+}

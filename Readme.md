@@ -23,7 +23,7 @@ You may publish the `site` directory through Web server if you wish to provide t
 Game design documents
 ---------------------
 
-All game design documents (in Russian) are available in the [docs][] directory.
+All game design documents are available in the [docs][] directory.
 
 Alpha version
 -------------
