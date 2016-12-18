@@ -62,9 +62,9 @@ License
 Keter is licensed under the terms of MIT License. See [`License.md`][license]
 file for details.
 
-[gdd-game-description]: docs/SCP%20Roguelike.md
-[gdd-general-concepts]: docs/General%20concepts.md
-[license]: License.md
+[gdd-game-description]: docs/SCP%20Roguelike
+[gdd-general-concepts]: docs/General%20concepts
+[license]: License
 [mockup-equipment-screen]: docs/Equipment%20screen.svg
 [mockup-inventory-screen]: docs/Inventory%20screen.svg
 [screenshot]: docs/screenshot.png
