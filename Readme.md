@@ -42,7 +42,7 @@ It's considered useful to continuously run the unit tests while changing the
 game files. That could be achieved using the following command:
 
 ```console
-sbt ~;test;site
+$ sbt ~;test;site
 ```
 
 Game design documents
