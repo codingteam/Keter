@@ -64,7 +64,7 @@ file for details.
 
 [gdd-game-description]: docs/SCP%20Roguelike
 [gdd-general-concepts]: docs/General%20concepts
-[license]: License
+[license]: License.md
 [mockup-equipment-screen]: docs/Equipment%20screen.svg
 [mockup-inventory-screen]: docs/Inventory%20screen.svg
 [screenshot]: docs/screenshot.png
