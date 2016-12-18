@@ -1,47 +1,80 @@
-Keter [![Build Status](https://travis-ci.org/codingteam/Keter.svg?branch=develop)](https://travis-ci.org/codingteam/Keter)
+Keter [![Build Status][badge-travis]][travis]
 =====
 
-Keter is a [roguelike](http://en.wikipedia.org/wiki/Roguelike) game based on the
-[SCP Foundation](http://www.scp-wiki.net/) universe.
+Keter is a [roguelike][] game based on the [SCP Foundation][scp] universe. It
+works in browser.
 
-It uses the [rot.js](http://ondras.github.io/rot.js/) library and is written in [Scala](http://www.scala-lang.org/)
-language using the [Scala.js](http://www.scala-js.org/) compiler.
+![Game screenshot][screenshot]
 
-Running the game
-----------------
+How to play
+-----------
 
-First of all, you'll need [node.js][node-js] 6.9.1+ to pack the application.
+The currently released version is published online at [keter.fornever.me][].
+[Game design documents](#game-design-documents) section could provide useful
+information about the game.
 
-Install the actual version of the [`sbt` tool](http://www.scala-sbt.org/). Run the following from the terminal:
+If you want to build the game yourself, please read the following sections.
 
-    $ sbt site
-    
-Then open the file `target/site/index.html` with your Web browser.
+How to build
+------------
 
-You may publish the `site` directory through Web server if you wish to provide the game for the other players.
+The game is written in [Scala][scala] programming language and uses [sbt][] for
+build process management. Build prerequisites:
+
+- [sbt][]
+- [Node.js][node-js] 6.9.1 or newer
+
+To build the application, execute the following command in your terminal:
+
+```console
+$ sbt site
+```
+
+After that, open `target/site/index.html` file with your Web browser.
+
+You may publish the `target/site` directory if you want to provide game access
+to the other players.
+
+How to run the unit tests
+-------------------------
+
+It's considered useful to continuously run the unit tests while changing the
+game files. That could be achieved using the following command:
+
+```console
+sbt ~;test;site
+```
 
 Game design documents
 ---------------------
 
-All game design documents are available in the [docs][] directory.
+- [Game description][gdd-game-description]
+- [General concepts][gdd-general-concepts]
 
-Alpha version
--------------
+### UI mockups
 
-You can always check an alpha version running at [keter.fornever.me](http://keter.fornever.me).
-
-Development
------------
-While developing the game, you may find useful continuously rerunning the tests
-and recompiling the site. It may be done with the following command:
-
-    $ sbt ~;test;site
+- [Inventory screen][mockup-inventory-screen]
+- [Equipment screen][mockup-equipment-screen]
 
 License
 -------
 
-Keter is licensed under the terms of MIT License. See `License.md` file for
-details.
+Keter is licensed under the terms of MIT License. See [`License.md`][license]
+file for details.
 
-[docs]: docs/
+[gdd-game-description]: docs/SCP%20Roguelike.md
+[gdd-general-concepts]: docs/General%20concepts.md
+[license]: License.md
+[mockup-equipment-screen]: docs/Equipment%20screen.svg
+[mockup-inventory-screen]: docs/Inventory%20screen.svg
+[screenshot]: docs/screenshot.png
+
+[badge-travis]: https://travis-ci.org/codingteam/Keter.svg?branch=develop
+
+[keter.fornever.me]: http://keter.fornever.me
 [node-js]: https://nodejs.org/
+[sbt]: http://www.scala-sbt.org/
+[scala]: http://www.scala-lang.org/
+[roguelike]: http://en.wikipedia.org/wiki/Roguelike
+[scp]: http://www.scp-wiki.net/
+[travis]: https://travis-ci.org/codingteam/Keter
