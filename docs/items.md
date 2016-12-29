@@ -7,13 +7,13 @@ Items
 
 # Weapons
 * Combat knife
-A common survival knife with a steel blade. Can be used as a can opener or an improvised spade.
+A common survival knife with a steel blade. Can be used as an improvised spade or a can opener.
 
 * Telescopic baton
 Modern take on a club. Good enough to reliably stun and incapacitate uncooperative disposable personnel.
 
 * USP .45
-Ubiquitous handgun that is used in security and specops forces throughout the world. Thanks to heavy bullet it really stops most of the varmints in their tracks.
+Ubiquitous intimidation tool that is used in security and specops forces throughout the world. In a bind, can be used to shoot things.
 
 * AK-12
 Infamous russian shooting club -- now with modern polymer stock and Picatinny rails.
@@ -29,7 +29,23 @@ Telescopic baton    |  50 | Med  | Melee |   1d6
 USP .45             | 100 | Med  |    10 |   2d6
 AK-12 assault rifle | 150 | High |    15 |   2d8
 
-## Usable items
+# Armor and clothing
+## Armor
+* Flak vest
+Kevlar vest with thin steel plates inside. Sometimes can stop or deflect a bullet. Still hurts like hell.
+
+* Combat armor
+A carrier vest with front and back armor plates, augmented with HMPE-aramid sleeves and leggings. Prevents enough damage to keep you alive and conscious for the worst part.
+ 
+# Armor stats
+* DR -- defence rating of an armor set
+
+Name         | RPs | Avl  | Range | DR
+------------ | --- | ---- | ----- | ---
+Flak vest    |  50 | Med  | Melee |  2
+Combat armor | 150 | High |    15 |  6
+
+# Usable items
 
 * Frag grenade
 A portable single-use IQ test. Push the lever, pull the pin, count to three and throw it at the enemy. If you're smart enough to understand what "it" means, you'll live. Maybe.
