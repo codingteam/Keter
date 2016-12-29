@@ -19,15 +19,15 @@ Ubiquitous intimidation tool that is used in security and specops forces through
 Infamous russian shooting club -- now with modern polymer stock and Picatinny rails.
 
 ## Weapon stats
-* Range -- shows maximum distance in tiles at which this weapon is effective.
+* Accuracy (Acc) -- accuryacy rating of a ranged weapon
 * Damage -- base damage roll of a weapon
  
-Name                | RPs | Avl  | Range | Damage
-------------------- | --- | ---- | ----- | ------
-Combat knife        |  25 | Low  | Melee |   1d4
-Telescopic baton    |  50 | Med  | Melee |   1d6
-USP .45             | 100 | Med  |    10 |   2d6
-AK-12 assault rifle | 150 | High |    15 |   2d8
+Name                | RPs | Avl  | Accuracy | Damage
+------------------- | --- | ---- | -------- | ------
+Combat knife        |  25 | Low  | Melee    |   2-6
+Telescopic baton    |  50 | Med  | Melee    |   2-10
+USP .45             | 100 | Med  |        1 |   6-12
+AK-12 assault rifle | 150 | High |        3 |   8-20
 
 # Armor and clothing
 ## Armor
@@ -51,7 +51,7 @@ Combat armor | 150 | High |    15 |  6
 A portable single-use IQ test. Push the lever, pull the pin, count to three and throw it at the enemy. If you're smart enough to understand what "it" means, you'll live. Maybe.
 
 * Flashbang
-Lets out a bright flash and a loud bang. Can give you that extra few seconds you need, provided that the mostrosities you threw that flashbang at actually use their eyes and ears.
+Lets out a bright flash and a loud bang. Can give you that extra few seconds you need, if those things you threw that flashbang at actually use their eyes and ears.
 
 * First aid kit
 Wound dressings, bandages and antiseptic spray that you'll need to turn a fast bleedout into a slow one.
@@ -70,4 +70,4 @@ Name                | RPs | Avl  | Target | Range | Time | Effect
 ------------------- | --- | ---- | ------ | ----- | ---- | ---------------------------------------------------------------------
  Frag grenade       | 50  | High | Point  | (Str) |   2s | 3d6 damage to any object 4 tiles or less from target point
  Flashbang          | 30  | Med  | Point  | (Str) |   2s | Stun (5s) to any susceptible object 5 tiles or less from target point
- First aid kit      | 25  | Low  | Object |     1 |   5s | Heal a living object for 2d4 non-anomalous damage
+ First aid kit      | 25  | Low  | Object |     1 |   5s | Heal a living object for 6-10 non-anomalous damage

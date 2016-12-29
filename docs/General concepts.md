@@ -35,3 +35,5 @@ All objects possess statistics that, in a nutshell, are some numbers that descri
 * Dexterity (Dex) -- agility, precision, speed, you know the drill.
 * IQ -- smarts, intelligence and wit.
 
+## Derivative stats
+* HP regeneration -- any living object naturally regenerates (Str) HP every 60 seconds, evenly distributed in time.
