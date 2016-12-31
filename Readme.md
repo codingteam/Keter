@@ -50,6 +50,9 @@ Game design documents
 
 - [Game description][gdd-game-description]
 - [General concepts][gdd-general-concepts]
+- [Character generation][gdd-character-generation]
+- [Combat mechanics][gdd-combat-mechanics]
+- [Items][gdd-items]
 
 ### UI mockups
 
@@ -62,8 +65,11 @@ License
 Keter is licensed under the terms of MIT License. See [`License.md`][license]
 file for details.
 
+[gdd-character-generation]: docs/character%20generation
+[gdd-combat-mechanics]: docs/combat
 [gdd-game-description]: docs/SCP%20Roguelike
 [gdd-general-concepts]: docs/General%20concepts
+[gdd-items]: docs/items
 [license]: License.md
 [mockup-equipment-screen]: docs/Equipment%20screen.svg
 [mockup-inventory-screen]: docs/Inventory%20screen.svg

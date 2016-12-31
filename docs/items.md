@@ -1,11 +1,11 @@
 Items
 =====
 
-# Common item stats
+## Common item stats
 * RPs -- cost to buy the item at character creation;
 * Avl -- minimal availability score this equipment is accessible at character creation;
 
-# Weapons
+## Weapons
 * Combat knife
 A common survival knife with a steel blade. Can be used as an improvised spade or a can opener.
 
@@ -18,10 +18,10 @@ Ubiquitous intimidation tool that is used in security and specops forces through
 * AK-12
 Infamous russian shooting club -- now with modern polymer stock and Picatinny rails.
 
-## Weapon stats
+### Weapon stats
 * Accuracy (Acc) -- accuryacy rating of a ranged weapon
 * Damage -- base damage roll of a weapon
- 
+
 Name                | RPs | Avl  | Accuracy | Damage
 ------------------- | --- | ---- | -------- | ------
 Combat knife        |  25 | Low  | Melee    |   2-6
@@ -29,15 +29,15 @@ Telescopic baton    |  50 | Med  | Melee    |   2-10
 USP .45             | 100 | Med  |        1 |   6-12
 AK-12 assault rifle | 150 | High |        3 |   8-20
 
-# Armor and clothing
-## Armor
+## Armor and clothing
+### Armor
 * Flak vest
 Kevlar vest with thin steel plates inside. Sometimes can stop or deflect a bullet. Still hurts like hell.
 
 * Combat armor
 A carrier vest with front and back armor plates, augmented with HMPE-aramid sleeves and leggings. Prevents enough damage to keep you alive and conscious for the worst part.
- 
-# Armor stats
+
+## Armor stats
 * DR -- defence rating of an armor set
 
 Name         | RPs | Avl  | Range | DR
@@ -45,7 +45,7 @@ Name         | RPs | Avl  | Range | DR
 Flak vest    |  50 | Med  | Melee |  2
 Combat armor | 150 | High |    15 |  6
 
-# Usable items
+## Usable items
 
 * Frag grenade
 A portable single-use IQ test. Push the lever, pull the pin, count to three and throw it at the enemy. If you're smart enough to understand what "it" means, you'll live. Maybe.
@@ -56,7 +56,7 @@ Lets out a bright flash and a loud bang. Can give you that extra few seconds you
 * First aid kit
 Wound dressings, bandages and antiseptic spray that you'll need to turn a fast bleedout into a slow one.
 
-## Usable items stats
+### Usable items stats
 * Target -- what the item use can be targeted at
 ** Object -- any object in range
 ** Point -- any point in range
