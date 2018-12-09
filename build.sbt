@@ -15,6 +15,9 @@ libraryDependencies ++= Seq(
 )
 
 npmDependencies in Compile += "rot-js" -> "0.6.2"
+npmDependencies in Compile += "webpack" -> "1.14.0"
+
+scalaJSUseMainModuleInitializer := true
 
 testFrameworks += new TestFramework("utest.runner.Framework")
 
@@ -30,8 +33,8 @@ site := {
   import java.nio.file.{Files, StandardCopyOption}
   (webpack in fullOptJS in Compile).value
   val targetDirectory = target.value / sitePath.value
-  val sourceJS = target.value / "scala-2.11" / "keter-opt-bundle.js"
-  val sourceMap = target.value / "scala-2.11" / "keter-opt-bundle.js.map"
+  val sourceJS = target.value / "scala-2.11" / "scalajs-bundler" / "main" / "keter-opt-bundle.js"
+  val sourceMap = target.value / "scala-2.11" / "scalajs-bundler" / "main" / "keter-opt-bundle.js.map"
   val targetJS = targetDirectory / "keter.js"
   val targetMap = targetDirectory / sourceMap.name
   targetJS.mkdirs()
