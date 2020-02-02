@@ -9,7 +9,6 @@ class GameViewModel(engine: Engine) {
   val statInfo: TextViewModel = new TextViewModel() {
 
     override def text: String = {
-      import ru.org.codingteam.keter.util._
       map.universeState.map { universe =>
         universe.player.map { player =>
           s"Faction/Name: ${player.faction.name}/${player.name}\n" +
