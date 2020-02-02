@@ -6,14 +6,15 @@ import ru.org.codingteam.keter.ui.viewmodels.TextViewModel
 class GameViewModel(engine: Engine) {
 
   val map = new GameMapViewModel(engine)
-  val statInfo = new TextViewModel() {
+  val statInfo: TextViewModel = new TextViewModel() {
 
     override def text: String = {
+      import ru.org.codingteam.keter.util._
       map.universeState.map { universe =>
         universe.player.map { player =>
           s"Faction/Name: ${player.faction.name}/${player.name}\n" +
           s"Health: ${player.stats.health}\n" +
-          s"Time global/local: ${universe.globalEvents.timestamp}/${player.eventQueue.timestamp}"
+          f"Time global/local: ${universe.globalEvents.timestamp}%.03f/${player.eventQueue.timestamp.toLong}"
         }.getOrElse("")
       }.getOrElse("")
     }
