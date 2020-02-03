@@ -6,7 +6,7 @@ name := "Keter"
 
 version := "0.0.1"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.11.12"
 
 libraryDependencies ++= Seq(
   "com.lihaoyi" %%% "utest" % "0.3.1",
