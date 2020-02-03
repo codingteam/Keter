@@ -13,7 +13,7 @@ class GameViewModel(engine: Engine) {
         universe.player.map { player =>
           s"Faction/Name: ${player.faction.name}/${player.name}\n" +
           s"Health: ${player.stats.health}\n" +
-          f"Time global/local: ${universe.globalEvents.timestamp}%.03f/${player.eventQueue.timestamp.toLong}"
+          f"Time global/local: ${universe.globalEvents.timestamp}%.03f/${player.eventQueue.timestamp}%.03f"
         }.getOrElse("")
       }.getOrElse("")
     }
